@@ -4,7 +4,7 @@ import { betaLink, BETA_URL } from './theme/site.ts'
 
 const SITE = 'https://sipquel.com'
 const DESCRIPTION =
-  'Sipquel is a small touchscreen for your coffee bar. It runs your scale, grinder and espresso machine, follows every brew live and keeps a journal you never have to write.'
+  'Sipquel is a 7-inch touchscreen for your coffee bar. It runs your scale, grinder and espresso machine, follows every brew live and keeps a journal you never have to write.'
 
 export default defineConfig({
   title: 'Sipquel',
@@ -27,7 +27,7 @@ export default defineConfig({
     ['meta', { property: 'og:image', content: SITE + '/og-card.png' }],
     ['meta', { property: 'og:image:width', content: '1200' }],
     ['meta', { property: 'og:image:height', content: '630' }],
-    ['meta', { property: 'og:image:alt', content: 'The Sipquel touchscreen showing a boiler gauge, the next shot and this week\'s brews.' }],
+    ['meta', { property: 'og:image:alt', content: 'The Sipquel touchscreen during a shot: 22.9 g of 36.4 g, 7.5 bar and the live extraction chart.' }],
     ['meta', { name: 'twitter:card', content: 'summary_large_image' }],
     ['meta', { name: 'twitter:title', content: 'Sipquel - your coffee bar, orchestrated' }],
     ['meta', { name: 'twitter:description', content: DESCRIPTION }],

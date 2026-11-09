@@ -43,6 +43,8 @@ const compare = [
 ]
 const cmp = ref('home')
 const split = ref(50)
+const touched = ref(false)
+const cmpEl = ref<HTMLElement | null>(null)
 
 const svg = (d: string) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`
 const ICON: Record<string, string> = {
@@ -82,6 +84,27 @@ const faq = [
 ]
 
 const root = ref<HTMLElement | null>(null)
+
+function goStep(i: number) {
+  root.value?.querySelector(`.sq-story-step[data-i="${i}"]`)?.scrollIntoView({ behavior: still() ? 'auto' : 'smooth', block: 'center' })
+}
+
+// The first time the comparison comes into view, the handle sweeps once so it reads as draggable.
+let hint: IntersectionObserver | null = null
+let raf = 0
+function sweep() {
+  const t0 = performance.now(), dur = 2200
+  const ease = (x: number) => x < .5 ? 2 * x * x : 1 - (-2 * x + 2) ** 2 / 2
+  const tick = (now: number) => {
+    if (touched.value) return
+    const p = Math.min(1, (now - t0) / dur)
+    // 50 -> 28 -> 72 -> 50
+    const k = p < 1 / 3 ? 50 - 22 * ease(p * 3) : p < 2 / 3 ? 28 + 44 * ease((p - 1 / 3) * 3) : 72 - 22 * ease((p - 2 / 3) * 3)
+    split.value = Math.round(k * 10) / 10
+    if (p < 1) raf = requestAnimationFrame(tick)
+  }
+  raf = requestAnimationFrame(tick)
+}
 let reveal: IntersectionObserver | null = null
 let steps: IntersectionObserver | null = null
 const still = () => typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -95,13 +118,19 @@ onMounted(() => {
   root.value.querySelectorAll('.sq-story-step').forEach((el) => steps!.observe(el))
 
   if (still()) return
+  if (cmpEl.value) {
+    hint = new IntersectionObserver((list) => {
+      if (list.some((en) => en.isIntersecting)) { hint?.disconnect(); setTimeout(() => { if (!touched.value) sweep() }, 500) }
+    }, { threshold: .6 })
+    hint.observe(cmpEl.value)
+  }
   reveal = new IntersectionObserver((list) => {
     for (const en of list) if (en.isIntersecting) { en.target.classList.add('in'); reveal?.unobserve(en.target) }
   }, { rootMargin: '0px 0px -8% 0px', threshold: .08 })
   root.value.querySelectorAll('.sq-rv').forEach((el) => reveal!.observe(el))
   root.value.classList.add('sq-reveal')
 })
-onBeforeUnmount(() => { reveal?.disconnect(); steps?.disconnect() })
+onBeforeUnmount(() => { reveal?.disconnect(); steps?.disconnect(); hint?.disconnect(); cancelAnimationFrame(raf) })
 </script>
 
 <template>
@@ -112,7 +141,7 @@ onBeforeUnmount(() => { reveal?.disconnect(); steps?.disconnect() })
       <a class="sq-pill" :href="BETA_URL" target="_blank" rel="noopener">
         <span class="sq-dot" />Beta opening soon<span class="sq-pill-sep" />Join us on Discord<span class="sq-pill-arrow" aria-hidden="true">→</span>
       </a>
-      <h1>Your coffee bar,<br><em>orchestrated.</em></h1>
+      <h1><span class="ln">Your coffee bar,</span><em class="ln">orchestrated.</em></h1>
       <p class="sq-lead">
         A 7-inch touchscreen for your counter. It runs your scale, grinder and espresso machine,
         follows every brew live, and keeps a journal you never have to write.
@@ -124,6 +153,7 @@ onBeforeUnmount(() => { reveal?.disconnect(); steps?.disconnect() })
 
       <div class="sq-hero-stage">
         <div class="sq-frame sq-frame-xl">
+          <img class="sq-ambient" src="/screens/home.webp" alt="" aria-hidden="true">
           <img src="/screens/home.webp" width="1024" height="600" alt="The Sipquel touchscreen on its Home page: the boiler gauge heading for 93 °C, the next shot, the grinder and this week's brews." fetchpriority="high">
         </div>
         <div class="sq-counter" aria-hidden="true" />
@@ -151,15 +181,18 @@ onBeforeUnmount(() => { reveal?.disconnect(); steps?.disconnect() })
           </article>
         </div>
 
-        <div class="sq-story-pin" aria-hidden="true">
+        <div class="sq-story-pin">
           <div class="sq-story-sticky">
             <div class="sq-frame sq-frame-lg">
+              <img v-for="(s, i) in story" :key="'a' + s.id" class="sq-ambient" :class="{ show: cur === i }" :src="img(s.id)" alt="" aria-hidden="true" loading="lazy">
               <div class="sq-stage">
-                <img v-for="(s, i) in story" :key="s.id" :src="img(s.id)" width="1024" height="600" loading="lazy" alt="" :class="{ show: cur === i }">
+                <img v-for="(s, i) in story" :key="s.id" :src="img(s.id)" width="1024" height="600" loading="lazy" :alt="s.alt" :aria-hidden="cur !== i" :class="{ show: cur === i }">
               </div>
             </div>
-            <ol class="sq-story-rail">
-              <li v-for="(s, i) in story" :key="s.id" :class="{ on: cur === i, past: i < cur }"><i />{{ s.title }}</li>
+            <ol class="sq-story-rail" aria-label="Steps">
+              <li v-for="(s, i) in story" :key="s.id" :class="{ on: cur === i, past: i < cur }">
+                <button type="button" :aria-current="cur === i ? 'step' : undefined" @click="goStep(i)"><i />{{ s.title }}</button>
+              </li>
             </ol>
           </div>
         </div>
@@ -183,7 +216,7 @@ onBeforeUnmount(() => { reveal?.disconnect(); steps?.disconnect() })
         </ul>
       </div>
       <div class="sq-duo sq-rv" style="--d: 120ms">
-        <div class="sq-frame sq-duo-a"><img src="/screens/pour.webp" width="1024" height="600" loading="lazy" alt="A guided V60 pour: the bloom dial at 50 g, the brew time and the planned and measured water."></div>
+        <div class="sq-frame sq-duo-a"><img class="sq-ambient" src="/screens/pour.webp" alt="" aria-hidden="true" loading="lazy"><img src="/screens/pour.webp" width="1024" height="600" loading="lazy" alt="A guided V60 pour: the bloom dial at 50 g, the brew time and the planned and measured water."></div>
         <div class="sq-frame sq-duo-b"><img src="/screens/pourdone.webp" width="1024" height="600" loading="lazy" alt="Brew complete: 3:04 total, 251 g of water at 1:16.7, plotted against the plan, with a star rating."></div>
       </div>
     </section>
@@ -195,9 +228,10 @@ onBeforeUnmount(() => { reveal?.disconnect(); steps?.disconnect() })
         <h2>Read any shot back.</h2>
         <p class="sq-sub">Open a brew and its whole extraction is there: pressure, pump flow, yield, boiler and weight flow on one chart, the targets dashed, every reading alongside.</p>
       </header>
-      <div class="sq-frame sq-frame-xl sq-rv">
+      <div class="sq-rv"><div class="sq-frame sq-frame-xl">
+        <img class="sq-ambient" src="/screens/traces.webp" alt="" aria-hidden="true" loading="lazy">
         <img src="/screens/traces.webp" width="1024" height="600" loading="lazy" alt="The extraction detail: pressure, pump flow, yield, boiler and weight-flow traces with dashed targets and the readings at 23.2 s.">
-      </div>
+      </div></div>
     </section>
 
     <!-- Features -->
@@ -226,13 +260,13 @@ onBeforeUnmount(() => { reveal?.disconnect(); steps?.disconnect() })
         <button v-for="c in compare" :key="c.id" role="tab" :aria-selected="cmp === c.id" :class="{ on: cmp === c.id }" @click="cmp = c.id">{{ c.label }}</button>
       </div>
       <div class="sq-frame sq-frame-xl sq-rv">
-        <div class="sq-compare" :style="{ '--x': split + '%' }">
+        <div ref="cmpEl" class="sq-compare" :style="{ '--x': split + '%' }">
           <img :src="img(cmp)" width="1024" height="600" loading="lazy" :alt="'Night theme: ' + compare.find(c => c.id === cmp)!.label">
           <img class="sq-compare-day" :src="img(cmp, true)" width="1024" height="600" loading="lazy" :alt="'Day theme: ' + compare.find(c => c.id === cmp)!.label">
           <div class="sq-compare-line" aria-hidden="true"><span>‹ ›</span></div>
           <span class="sq-compare-tag l" aria-hidden="true">Night</span>
           <span class="sq-compare-tag r" aria-hidden="true">Day</span>
-          <input v-model.number="split" type="range" min="0" max="100" step="1" aria-label="Compare the Night and Day themes">
+          <input v-model.number="split" type="range" @pointerdown="touched = true" @keydown="touched = true" min="0" max="100" step="1" aria-label="Compare the Night and Day themes">
         </div>
       </div>
     </section>
