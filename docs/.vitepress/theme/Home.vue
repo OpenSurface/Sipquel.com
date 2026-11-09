@@ -2,6 +2,7 @@
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 import DeviceArt from './DeviceArt.vue'
 import BetaButton from './BetaButton.vue'
+import BeanField from './BeanField.vue'
 import { BETA_URL, GITHUB_URL } from './site'
 
 // Every image on this page is a real capture of the panel's own UI.
@@ -195,6 +196,7 @@ onBeforeUnmount(() => { reveal?.disconnect(); steps?.disconnect(); hint?.disconn
     <!-- Hero -->
     <section class="sq-hero">
       <div class="sq-lamp" aria-hidden="true" />
+      <ClientOnly><BeanField /></ClientOnly>
       <a class="sq-pill" :href="BETA_URL" target="_blank" rel="noopener">
         <span class="sq-dot" />Beta opening soon<span class="sq-pill-sep" />Join us on Discord<span class="sq-pill-arrow" aria-hidden="true">→</span>
       </a>
