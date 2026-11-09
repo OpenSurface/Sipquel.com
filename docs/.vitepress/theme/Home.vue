@@ -2,7 +2,6 @@
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 import DeviceArt from './DeviceArt.vue'
 import BetaButton from './BetaButton.vue'
-import BeanField from './BeanField.vue'
 import { BETA_URL, GITHUB_URL } from './site'
 
 // Every image on this page is a real capture of the panel's own UI.
@@ -206,7 +205,6 @@ onBeforeUnmount(() => { reveal?.disconnect(); steps?.disconnect(); hint?.disconn
     <!-- Hero -->
     <section class="sq-hero">
       <div class="sq-lamp" aria-hidden="true" />
-      <ClientOnly><BeanField collide=".sq-tilt" /></ClientOnly>
       <a class="sq-pill" :href="BETA_URL" target="_blank" rel="noopener">
         <span class="sq-dot" />Beta opening soon<span class="sq-pill-sep" />Join us on Discord<span class="sq-pill-arrow" aria-hidden="true">→</span>
       </a>
@@ -444,7 +442,6 @@ onBeforeUnmount(() => { reveal?.disconnect(); steps?.disconnect(); hint?.disconn
     <!-- CTA -->
     <section ref="finalEl" class="sq-final sq-rv">
       <div class="sq-lamp sq-lamp-2" aria-hidden="true" />
-      <ClientOnly><BeanField floor /></ClientOnly>
       <img src="/brand/sipquel-logo-night.svg" width="176" height="147" alt="Sipquel">
       <h2>Be one of the first<br><em>to brew with it.</em></h2>
       <p class="sq-sub">The beta is almost ready. Join the Discord, tell us what is on your bench, and help shape what Sipquel becomes.</p>

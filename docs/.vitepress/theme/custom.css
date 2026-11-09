@@ -96,9 +96,7 @@
 .sq-hero { position: relative; max-width: 1280px; margin: 0 auto; padding: clamp(44px, 7vw, 96px) var(--pad) 0; text-align: center; }
 .sq-lamp { position: absolute; left: 50%; top: -260px; width: min(1400px, 140vw); height: 900px; transform: translateX(-50%); pointer-events: none; z-index: 0;
   background: radial-gradient(50% 50% at 50% 40%, rgba(240, 200, 140, .22), rgba(224, 192, 136, .07) 45%, transparent 72%); }
-.sq-hero > *:not(.sq-lamp):not(.sq-beans) { position: relative; z-index: 1; }
-.sq-beans { position: absolute; top: 0; left: 50%; width: 100vw; height: 100%; transform: translateX(-50%); z-index: 0; pointer-events: none;
-  -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 62%, transparent 96%); mask-image: linear-gradient(180deg, #000 0%, #000 62%, transparent 96%); }
+.sq-hero > *:not(.sq-lamp) { position: relative; z-index: 1; }
 .sq-pill { display: inline-flex; align-items: center; gap: 10px; padding: 7px 15px; border: 1px solid var(--sq-line-2); border-radius: 999px;
   font-size: 13.5px; color: var(--sq-ink-2) !important; background: rgba(27, 22, 18, .6); backdrop-filter: blur(8px); transition: border-color .25s ease, background .25s ease; }
 .sq-pill:hover { border-color: rgba(224, 192, 136, .5); background: rgba(224, 192, 136, .08); }
@@ -274,9 +272,8 @@
 /* Final call */
 .sq-final { position: relative; overflow: hidden; max-width: 1280px; margin: clamp(90px, 11vw, 150px) auto clamp(56px, 7vw, 96px); padding: clamp(56px, 8vw, 110px) var(--pad);
   text-align: center; border-radius: 36px; background: linear-gradient(180deg, var(--sq-surface), var(--sq-bg)); border: 1px solid var(--sq-line); }
-.sq-final > *:not(.sq-lamp):not(.sq-beans) { position: relative; z-index: 1; }
-.sq-final .sq-beans { left: 0; width: 100%; transform: none; -webkit-mask-image: none; mask-image: none; opacity: .8; }
-.sq-final img { width: 132px; height: auto; margin: 0 auto 10px; display: block; }
+.sq-final > *:not(.sq-lamp) { position: relative; z-index: 1; }
+.sq-final .sq-final img { width: 132px; height: auto; margin: 0 auto 10px; display: block; }
 .sq-final .sq-sub { margin-inline: auto; }
 .sq-lamp-2 { top: auto; bottom: -520px; height: 800px; }
 
