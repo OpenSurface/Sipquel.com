@@ -16,7 +16,6 @@ const screens = [
   { id: 'home', label: 'Home', alt: 'Sipquel Home: the boiler gauge heading for 93 °C, the next shot, the grinder and coffee tiles, and this week\'s brews.' },
   { id: 'pour', label: 'Pour guide', alt: 'A guided V60 pour: the bloom dial at 50 g, the brew time, the planned and measured water curves, and the next step.' },
   { id: 'prep', label: 'Prep', alt: 'The pour-over prep checklist: kettle to 94 °C, weigh 15.4 g, grind, rinse, then tare.' },
-  { id: 'graph', label: 'Shot graph', alt: 'The espresso graph details with pressure, pump flow and cup weight, and a pinned reading.' },
 ]
 const active = ref('home')
 const theme = ref<'night' | 'day'>('night')
@@ -158,17 +157,17 @@ onBeforeUnmount(() => io?.disconnect())
 
     <!-- Live shot -->
     <section id="shot" class="sq-section sq-shot">
-      <div class="sq-shot-copy sq-rv">
+      <header class="sq-head sq-rv">
         <p class="sq-kicker">Watch a shot</p>
-        <h2>Every second of the shot, drawn as it pours.</h2>
-        <p class="sq-sub">Sipquel reads your machine and your scale together, so the curve, the timer and the cup weight move as one.</p>
-        <ul class="sq-ticks">
-          <li><b class="gold">Pressure</b> from the machine, in bar</li>
-          <li><b class="blue">Pump flow</b> from the machine, in ml/s</li>
-          <li><b>Cup weight</b> from the scale, with the ratio as it builds</li>
-        </ul>
-      </div>
-      <div class="sq-rv" style="--d: 120ms"><LiveShot /></div>
+        <h2>Know how the shot is going while it pours.</h2>
+        <p class="sq-sub">This is the Brewing screen. The machine sends pressure and flow, the scale sends the cup weight, and Sipquel puts them together against your recipe: 18.2 g in, 36.4 g out, in 28 ± 2 s.</p>
+      </header>
+      <div class="sq-rv"><LiveShot /></div>
+      <ul class="sq-shot-explain">
+        <li class="sq-rv"><h3>The ring is your cup</h3><p>It fills with the weight from the scale. The hollow marker is where the recipe says the cup should be right now, so you see at a glance if the shot runs fast or slow.</p></li>
+        <li class="sq-rv" style="--d: 80ms"><h3>The dashed line is the plan</h3><p>Your machine profile: a 3 bar soak, a ramp to 9 bar, then a gentle decline. The live pressure is drawn over it, phase by phase.</p></li>
+        <li class="sq-rv" style="--d: 160ms"><h3>The pace tells you the finish</h3><p>From the cup's own speed, Sipquel says when the shot will reach its stop weight, and whether that lands inside your aim.</p></li>
+      </ul>
     </section>
 
     <!-- Features -->
@@ -180,10 +179,10 @@ onBeforeUnmount(() => io?.disconnect())
       <div class="sq-bento" @pointermove="spot">
         <article class="sq-card sq-card-wide sq-spot sq-rv">
           <div class="sq-card-copy">
-            <h3>The shot, as it happens</h3>
-            <p>Pressure, pump flow and cup weight drawn live from your machine. Open the details, pin any second and read it exactly. If the graph ever goes quiet, it says so instead of pretending.</p>
+            <h3>Prep, step by step</h3>
+            <p>Before the brew, a short checklist from your recipe: heat the kettle, weigh the dose, grind, rinse, tare.</p>
           </div>
-          <img src="/screens/graph.webp" width="1024" height="600" loading="lazy" alt="The live espresso graph with pressure, pump flow and cup weight.">
+          <img src="/screens/prep.webp" width="1024" height="600" loading="lazy" alt="The pour-over prep checklist: kettle to 94 °C, weigh 15.4 g, grind, rinse, then tare.">
         </article>
         <article class="sq-card sq-spot sq-rv" style="--d: 60ms">
           <span class="sq-ico" v-html="ICON.journal" />
