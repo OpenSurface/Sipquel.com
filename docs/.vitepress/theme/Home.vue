@@ -35,6 +35,12 @@ const story = [
 ]
 const cur = ref(0)
 
+const benchSets = [
+  { art: 'gaggia', name: 'Espresso machine', text: 'Gets the recipe\'s profile, brew temperature and stop weight.' },
+  { art: 'motto80', name: 'Grinder', text: 'Gets the burr speed, feeder speed and preset. The burr collar is yours to turn: the target is shown and you confirm it.' },
+  { art: 'themis', name: 'Scale', text: 'Checked that it is connected and reading, ready for the dose.' },
+]
+
 const manifesto = [
   ...'Weigh the beans. Set the grinder. Watch the shot.'.split(' ').map((w) => ({ w, g: false })),
   ...'Sipquel remembers the rest.'.split(' ').map((w) => ({ w, g: true })),
@@ -77,11 +83,18 @@ const ICON: Record<string, string> = {
   check: svg('<path d="M5 12.5l4.5 4.5L19 7.5"/>'),
 }
 
-const features = [
-  { icon: 'journal', title: 'A journal that writes itself', text: 'Every shot and pour is saved with dose, grind, time, yield and its curve.' },
-  { icon: 'replay', title: 'Pull it again', text: 'Pick a recipe or a brew you loved. The grinder and machine are set the same way.' },
+// Close-ups cut from the real screens, shown at their native size.
+const tiles = [
+  { img: 'c-last', w: 248, h: 144, wide: false, title: 'A journal that writes itself', text: 'Every shot and pour is saved with its ratio, time and curve the moment it ends.' },
+  { img: 'c-rate', w: 584, h: 104, wide: true, title: 'Rate it with one tap', text: 'Tap a star and it is saved. Add taste notes if you want: sour to bitter, acidity, sweetness, body.' },
+  { img: 'c-slow', w: 600, h: 64, wide: true, title: 'It speaks up while there is still time', text: 'If a shot is running past the recipe\'s time, the screen says so during the shot, not after.' },
+  { img: 'c-fresh', w: 248, h: 144, wide: false, title: 'Knows how fresh your coffee is', text: 'Days since roast against the rest, best and past windows, and the grams left in the bag.' },
+  { img: 'c-grind', w: 248, h: 144, wide: false, title: 'The grinder, against the recipe', text: 'The current grind size sits on Home, with how far it is from the recipe.' },
+  { img: 'c-week', w: 248, h: 144, wide: false, title: 'Your week at a glance', text: 'Brews, grams of coffee and your average rating for the week.' },
+  { img: 'c-again', w: 360, h: 56, wide: false, title: 'Pull it again', text: 'Repeat a brew you loved, or keep it as a recipe. The grinder and machine are set the same way.' },
+]
+const extras = [
   { icon: 'list', title: 'Prep, step by step', text: 'A short checklist before each brew: heat the kettle, weigh, grind, rinse, tare.' },
-  { icon: 'taste', title: 'Taste, in words', text: 'Sour to bitter, acidity, sweetness, body: notes that point to the next adjustment.' },
   { icon: 'phone', title: 'On your phone too', text: 'Open sipquel.local on the same Wi-Fi for the same bench and journal from the sofa.' },
   { icon: 'lock', title: 'Yours, on your counter', text: 'No account, no cloud, no subscription. Your coffees and journal stay on the panel.' },
 ]
@@ -192,7 +205,7 @@ onBeforeUnmount(() => { reveal?.disconnect(); steps?.disconnect(); hint?.disconn
       </p>
       <div class="sq-cta">
         <BetaButton />
-        <a class="sq-btn sq-btn-ghost" href="#story">See a shot</a>
+        <a class="sq-btn sq-btn-ghost" href="#bench">See how it works</a>
       </div>
 
       <div ref="stage" class="sq-hero-stage">
@@ -208,6 +221,32 @@ onBeforeUnmount(() => { reveal?.disconnect(); steps?.disconnect(); hint?.disconn
     <!-- Manifesto -->
     <section class="sq-manifesto">
       <p ref="words"><template v-for="(m, i) in manifesto" :key="i"><span :class="{ lit: i < lit, g: m.g }">{{ m.w }}</span>{{ ' ' }}</template></p>
+    </section>
+
+    <!-- Set the bench -->
+    <section id="bench" class="sq-section">
+      <header class="sq-head sq-head-c sq-rv">
+        <p class="sq-kicker">Set the bench</p>
+        <h2>One tap. <em>Every device ready.</em></h2>
+        <p class="sq-sub">Choose a coffee and tap Set the bench. Sipquel sends the recipe to your machine and grinder, then checks that each one really took it.</p>
+      </header>
+      <div class="sq-bench">
+        <figure class="sq-rv">
+          <div class="sq-frame"><img src="/screens/setbench.webp" width="880" height="528" loading="lazy" alt="The Set the bench sheet: machine profile Turbo bloom, brew temperature 93.0 °C, stop weight 36.0 g, grinder targets 465 µm at 1000 / 30 rpm, and the Set it up button."></div>
+          <figcaption><span>1</span><div><b>Review the targets</b>Profile, temperature, stop weight and grinder settings come from the recipe. Adjust them here, then tap Set it up.</div></figcaption>
+        </figure>
+        <figure class="sq-rv" style="--d: 120ms">
+          <div class="sq-frame"><img src="/screens/benchcheck.webp" width="584" height="444" loading="lazy" alt="The bench checklist: machine profile Match, brew temperature and stop weight Confirmed, Motto80 speeds Match, collar Checked, boiler still heating, scale Match."></div>
+          <figcaption><span>2</span><div><b>See it confirmed</b>Each device reports back, line by line: match, confirmed, or still different. No guessing whether it took.</div></figcaption>
+        </figure>
+      </div>
+      <div class="sq-bench-sets">
+        <article v-for="(b, i) in benchSets" :key="b.name" class="sq-rv" :style="{ '--d': i * 70 + 'ms' }">
+          <DeviceArt :name="b.art" />
+          <div><h3>{{ b.name }}</h3><p>{{ b.text }}</p></div>
+        </article>
+      </div>
+      <p class="sq-bench-note sq-rv">Nothing is sent until you tap Set it up, and Sipquel never starts a shot or heats water on its own.</p>
     </section>
 
     <!-- Story: one espresso, start to finish -->
@@ -304,11 +343,18 @@ onBeforeUnmount(() => { reveal?.disconnect(); steps?.disconnect(); hint?.disconn
     <!-- Features -->
     <section id="features" class="sq-section">
       <header class="sq-head sq-rv">
-        <p class="sq-kicker">And the rest</p>
+        <p class="sq-kicker">Up close</p>
         <h2>Small things that add up to <em>a better cup.</em></h2>
       </header>
-      <div class="sq-features">
-        <article v-for="(f, i) in features" :key="f.title" class="sq-feature sq-rv" :style="{ '--d': (i % 3) * 70 + 'ms' }">
+      <div class="sq-tiles">
+        <article v-for="(t, i) in tiles" :key="t.img" class="sq-tile sq-rv" :class="{ wide: t.wide }" :style="{ '--d': (i % 3) * 70 + 'ms' }">
+          <div class="sq-tile-art"><img :src="'/screens/' + t.img + '.webp'" :width="t.w" :height="t.h" loading="lazy" alt=""></div>
+          <h3>{{ t.title }}</h3>
+          <p>{{ t.text }}</p>
+        </article>
+      </div>
+      <div class="sq-extras">
+        <article v-for="(f, i) in extras" :key="f.title" class="sq-rv" :style="{ '--d': i * 70 + 'ms' }">
           <span class="sq-ico" v-html="ICON[f.icon]" />
           <h3>{{ f.title }}</h3>
           <p>{{ f.text }}</p>
