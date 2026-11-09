@@ -4,33 +4,65 @@ import DeviceArt from './DeviceArt.vue'
 import BetaButton from './BetaButton.vue'
 import { BETA_URL, GITHUB_URL } from './site'
 
-const steps = [
-  { n: '01', title: 'Dose', art: 'themis', text: 'Weigh the beans on your scale. Sipquel reads the weight live and settles on the dose.' },
-  { n: '02', title: 'Grind', art: 'motto80', text: 'Your grinder is set to the recipe. Sipquel times the grind and records the setting it used.' },
-  { n: '03', title: 'Brew', art: 'gaggia', text: 'Pressure, pump flow and weight are drawn as the shot runs, or each pour is guided step by step.' },
-  { n: '04', title: 'Remember', art: 'v60', text: 'The brew lands in your journal with every number. Rate it, add a note, pull it again.' },
-]
+// Every image on this page is a real capture of the panel's own UI.
+const img = (id: string, day = false) => `/screens/${id}${day ? '-day' : ''}.webp`
 
-const screens = [
-  { id: 'home', label: 'Home', alt: 'Sipquel Home: the boiler gauge heading for 93 °C, the next shot, the grinder and coffee tiles, and this week\'s brews.' },
-  { id: 'pour', label: 'Pour guide', alt: 'A guided V60 pour: the bloom dial at 50 g, the brew time, the planned and measured water curves, and the next step.' },
-  { id: 'prep', label: 'Prep', alt: 'The pour-over prep checklist: kettle to 94 °C, weigh 15.4 g, grind, rinse, then tare.' },
+const story = [
+  {
+    id: 'dose', n: '01', title: 'Dose', head: 'Weigh to the notch.',
+    text: 'Pour beans onto your scale and watch the dial fill to the recipe\'s dose. Hold still and it locks. It also shows what is left in the bag.',
+    stats: [['18.2', 'g', 'dose target'], ['142', 'g', 'left in the bag']],
+    alt: 'Weighing beans: the dose dial at 14.7 g of 18.2 g with the recipe targets alongside.',
+  },
+  {
+    id: 'grind', n: '02', title: 'Grind', head: 'Ground to the recipe.',
+    text: 'Your grinder gets the recipe\'s burr speed and feeder. Sipquel times the grind and learns how long this coffee takes.',
+    stats: [['465', 'µm', 'collar'], ['1000', 'rpm', 'burr speed']],
+    alt: 'Grinding: a 5.1 s timer, the Motto80 collar at 465 µm, burr 1000 rpm and feeder 30 rpm.',
+  },
+  {
+    id: 'brew', n: '03', title: 'Brew', head: 'Every second, on one chart.',
+    text: 'Yield fills the dial; pressure, pump flow and boiler draw live with the targets dashed. Running slow? It says so while there is still time to act.',
+    stats: [['7.5', 'bar', 'pressure'], ['2.3', 'ml/s', 'pump flow']],
+    alt: 'A live shot: 22.9 g of 36.4 g, 23.2 s, 7.5 bar, 2.3 ml/s and the extraction chart.',
+  },
+  {
+    id: 'done', n: '04', title: 'Remember', head: 'Saved before you sip.',
+    text: 'Ratio, time, first drip, peak pressure and the whole curve land in your journal. Tap a star, pull it again, or keep it as a recipe.',
+    stats: [['1:2.00', '', 'ratio'], ['29.6', 's', 'on time']],
+    alt: 'Shot complete: ratio 1:2.00, 29.6 s, first drip 7.0 s, peak 9.2 bar and the pressure curve.',
+  },
 ]
-const active = ref('home')
-const theme = ref<'night' | 'day'>('night')
-const shot = (id: string, t: string) => `/screens/${id}${t === 'day' ? '-day' : ''}.webp`
+const cur = ref(0)
 
-// Line icons in the same stroke language as the device drawings.
+const compare = [
+  { id: 'home', label: 'Home' },
+  { id: 'brew', label: 'Brewing' },
+  { id: 'done', label: 'Done' },
+  { id: 'pour', label: 'Pour-over' },
+]
+const cmp = ref('home')
+const split = ref(50)
+
 const svg = (d: string) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`
 const ICON: Record<string, string> = {
   journal: svg('<path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3z"/><path d="M5 17a3 3 0 0 1 3-3h11M9 8h6"/>'),
   replay: svg('<path d="M4 12a8 8 0 1 0 2.3-5.6"/><path d="M4 4v4h4"/><path d="M10 9l5 3-5 3z"/>'),
   taste: svg('<path d="M12 3c3.5 4.2 6 7.4 6 10.5A6 6 0 0 1 6 13.5C6 10.4 8.5 7.2 12 3z"/><path d="M9.5 14.5a2.5 2.5 0 0 0 2.5 2.5"/>'),
   phone: svg('<rect x="7" y="3" width="10" height="18" rx="2.5"/><path d="M11 17.5h2"/>'),
-  moon: svg('<path d="M20 14.5A8 8 0 0 1 9.5 4 7 7 0 1 0 20 14.5z"/>'),
-  sun: svg('<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>'),
+  list: svg('<path d="M9 6h11M9 12h11M9 18h11"/><path d="M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2"/>'),
   lock: svg('<rect x="5" y="10" width="14" height="10" rx="2.5"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/>'),
+  check: svg('<path d="M5 12.5l4.5 4.5L19 7.5"/>'),
 }
+
+const features = [
+  { icon: 'journal', title: 'A journal that writes itself', text: 'Every shot and pour is saved with dose, grind, time, yield and its curve.' },
+  { icon: 'replay', title: 'Pull it again', text: 'Pick a recipe or a brew you loved. The grinder and machine are set the same way.' },
+  { icon: 'list', title: 'Prep, step by step', text: 'A short checklist before each brew: heat the kettle, weigh, grind, rinse, tare.' },
+  { icon: 'taste', title: 'Taste, in words', text: 'Sour to bitter, acidity, sweetness, body: notes that point to the next adjustment.' },
+  { icon: 'phone', title: 'On your phone too', text: 'Open sipquel.local on the same Wi-Fi for the same bench and journal from the sofa.' },
+  { icon: 'lock', title: 'Yours, on your counter', text: 'No account, no cloud, no subscription. Your coffees and journal stay on the panel.' },
+]
 
 const devices = [
   { art: 'themis', name: 'BOOKOO Themis', kind: 'Scale', status: 'Supported' },
@@ -49,145 +81,158 @@ const faq = [
   { q: 'Where is my data kept?', a: 'On the panel, optionally on its SD card. Nothing is sent to a cloud.' },
 ]
 
-// Sections fade in once as they scroll into view (never with reduced motion).
 const root = ref<HTMLElement | null>(null)
-let io: IntersectionObserver | null = null
+let reveal: IntersectionObserver | null = null
+let steps: IntersectionObserver | null = null
 const still = () => typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches
 
 onMounted(() => {
-  if (still() || !('IntersectionObserver' in window) || !root.value) return
-  io = new IntersectionObserver((list) => {
-    for (const en of list) if (en.isIntersecting) { en.target.classList.add('in'); io?.unobserve(en.target) }
+  if (!root.value || !('IntersectionObserver' in window)) return
+  // The pinned screen follows whichever story step crosses the middle of the viewport.
+  steps = new IntersectionObserver((list) => {
+    for (const en of list) if (en.isIntersecting) cur.value = Number((en.target as HTMLElement).dataset.i)
+  }, { rootMargin: '-45% 0px -45% 0px' })
+  root.value.querySelectorAll('.sq-story-step').forEach((el) => steps!.observe(el))
+
+  if (still()) return
+  reveal = new IntersectionObserver((list) => {
+    for (const en of list) if (en.isIntersecting) { en.target.classList.add('in'); reveal?.unobserve(en.target) }
   }, { rootMargin: '0px 0px -8% 0px', threshold: .08 })
-  root.value.querySelectorAll('.sq-rv').forEach((el) => io!.observe(el))
+  root.value.querySelectorAll('.sq-rv').forEach((el) => reveal!.observe(el))
   root.value.classList.add('sq-reveal')
 })
-onBeforeUnmount(() => io?.disconnect())
+onBeforeUnmount(() => { reveal?.disconnect(); steps?.disconnect() })
 </script>
 
 <template>
   <div ref="root" class="sq">
     <!-- Hero -->
     <section class="sq-hero">
-      <div class="sq-glow" aria-hidden="true" />
-      <div class="sq-hero-copy">
-        <a class="sq-pill" :href="BETA_URL" target="_blank" rel="noopener">
-          <span class="sq-dot" />Beta opening soon<span class="sq-pill-sep" />Join us on Discord<span class="sq-pill-arrow" aria-hidden="true">→</span>
-        </a>
-        <h1><span class="nw">Your coffee bar,</span><br><em>orchestrated.</em></h1>
-        <p class="sq-lead">
-          Sipquel is a 7-inch touchscreen that lives on your counter. It runs your scale, grinder and
-          espresso machine, follows every brew live, and keeps a journal you never have to write.
-        </p>
-        <div class="sq-cta">
-          <BetaButton />
-          <a class="sq-btn sq-btn-ghost" href="/guide/how-it-works">How it works</a>
-        </div>
-        <p class="sq-trust">Works with <b>BOOKOO</b> · <b>Gaggiuino</b> · <b>Fellow</b> <span>(experimental)</span></p>
+      <div class="sq-lamp" aria-hidden="true" />
+      <a class="sq-pill" :href="BETA_URL" target="_blank" rel="noopener">
+        <span class="sq-dot" />Beta opening soon<span class="sq-pill-sep" />Join us on Discord<span class="sq-pill-arrow" aria-hidden="true">→</span>
+      </a>
+      <h1>Your coffee bar,<br><em>orchestrated.</em></h1>
+      <p class="sq-lead">
+        A 7-inch touchscreen for your counter. It runs your scale, grinder and espresso machine,
+        follows every brew live, and keeps a journal you never have to write.
+      </p>
+      <div class="sq-cta">
+        <BetaButton />
+        <a class="sq-btn sq-btn-ghost" href="#story">See a shot</a>
       </div>
 
-      <div class="sq-hero-device">
-        <div class="sq-device">
-          <div class="sq-bezel">
-            <img src="/screens/home.webp" width="1024" height="600" alt="The Sipquel touchscreen on its Home page." fetchpriority="high">
+      <div class="sq-hero-stage">
+        <div class="sq-frame sq-frame-xl">
+          <img src="/screens/home.webp" width="1024" height="600" alt="The Sipquel touchscreen on its Home page: the boiler gauge heading for 93 °C, the next shot, the grinder and this week's brews." fetchpriority="high">
+        </div>
+        <div class="sq-counter" aria-hidden="true" />
+      </div>
+      <p class="sq-trust">Works with <b>BOOKOO</b><i /><b>Gaggiuino</b><i /><b>Fellow</b> <span>experimental</span></p>
+    </section>
+
+    <!-- Story: one espresso, start to finish -->
+    <section id="story" class="sq-section sq-story">
+      <header class="sq-head sq-head-c sq-rv">
+        <p class="sq-kicker">Espresso, start to finish</p>
+        <h2>One shot. Four steps.<br><span class="sq-dim">Nothing to write down.</span></h2>
+      </header>
+
+      <div class="sq-story-grid">
+        <div class="sq-story-steps">
+          <article v-for="(s, i) in story" :key="s.id" class="sq-story-step" :class="{ on: cur === i }" :data-i="i">
+            <div class="sq-frame sq-story-inline"><img :src="img(s.id)" width="1024" height="600" loading="lazy" :alt="s.alt"></div>
+            <p class="sq-story-n"><span>{{ s.n }}</span>{{ s.title }}</p>
+            <h3>{{ s.head }}</h3>
+            <p class="sq-story-text">{{ s.text }}</p>
+            <dl class="sq-stats">
+              <div v-for="st in s.stats" :key="st[2]"><dt>{{ st[2] }}</dt><dd>{{ st[0] }}<small v-if="st[1]">{{ st[1] }}</small></dd></div>
+            </dl>
+          </article>
+        </div>
+
+        <div class="sq-story-pin" aria-hidden="true">
+          <div class="sq-story-sticky">
+            <div class="sq-frame sq-frame-lg">
+              <div class="sq-stage">
+                <img v-for="(s, i) in story" :key="s.id" :src="img(s.id)" width="1024" height="600" loading="lazy" alt="" :class="{ show: cur === i }">
+              </div>
+            </div>
+            <ol class="sq-story-rail">
+              <li v-for="(s, i) in story" :key="s.id" :class="{ on: cur === i, past: i < cur }"><i />{{ s.title }}</li>
+            </ol>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- The workflow -->
-    <section class="sq-section">
-      <header class="sq-head sq-rv">
-        <p class="sq-kicker">One bench, one flow</p>
-        <h2>From beans to a better next cup.</h2>
+    <!-- Pour-over -->
+    <section class="sq-section sq-pour">
+      <div class="sq-pour-copy sq-rv">
+        <p class="sq-kicker">Pour-over</p>
+        <h2>Every pour,<br>against the plan.</h2>
+        <p class="sq-sub">
+          Bloom, pour, swirl, drawdown. Each step shows its target water and time while your scale
+          fills the dial. When it is done, the brew is laid over the plan so you can see where it drifted.
+        </p>
+        <ul class="sq-checks">
+          <li><span v-html="ICON.check" />Guided steps with target water and time</li>
+          <li><span v-html="ICON.check" />Live weight and pace from your scale</li>
+          <li><span v-html="ICON.check" />This brew against the plan, pour by pour</li>
+          <li><span v-html="ICON.check" />A grind hint for next time</li>
+        </ul>
+      </div>
+      <div class="sq-duo sq-rv" style="--d: 120ms">
+        <div class="sq-frame sq-duo-a"><img src="/screens/pour.webp" width="1024" height="600" loading="lazy" alt="A guided V60 pour: the bloom dial at 50 g, the brew time and the planned and measured water."></div>
+        <div class="sq-frame sq-duo-b"><img src="/screens/pourdone.webp" width="1024" height="600" loading="lazy" alt="Brew complete: 3:04 total, 251 g of water at 1:16.7, plotted against the plan, with a star rating."></div>
+      </div>
+    </section>
+
+    <!-- Read any shot back -->
+    <section class="sq-section sq-traces">
+      <header class="sq-head sq-head-c sq-rv">
+        <p class="sq-kicker">The journal</p>
+        <h2>Read any shot back.</h2>
+        <p class="sq-sub">Open a brew and its whole extraction is there: pressure, pump flow, yield, boiler and weight flow on one chart, the targets dashed, every reading alongside.</p>
       </header>
-      <ol class="sq-steps">
-        <li v-for="(s, i) in steps" :key="s.n" class="sq-step sq-rv" :style="{ '--d': i * 90 + 'ms' }">
-          <DeviceArt :name="s.art" />
-          <span class="sq-step-n">{{ s.n }}</span>
-          <h3>{{ s.title }}</h3>
-          <p>{{ s.text }}</p>
-        </li>
-      </ol>
+      <div class="sq-frame sq-frame-xl sq-rv">
+        <img src="/screens/traces.webp" width="1024" height="600" loading="lazy" alt="The extraction detail: pressure, pump flow, yield, boiler and weight-flow traces with dashed targets and the readings at 23.2 s.">
+      </div>
     </section>
 
     <!-- Features -->
     <section id="features" class="sq-section">
       <header class="sq-head sq-rv">
-        <p class="sq-kicker">Features</p>
-        <h2>Everything you used to write down, written down for you.</h2>
+        <p class="sq-kicker">And the rest</p>
+        <h2>Small things that add up to a better cup.</h2>
       </header>
-      <div class="sq-bento">
-        <article class="sq-card sq-card-wide sq-rv">
-          <div class="sq-card-copy">
-            <h3>Prep, step by step</h3>
-            <p>Before the brew, a short checklist from your recipe: heat the kettle, weigh the dose, grind, rinse, tare.</p>
-          </div>
-          <img src="/screens/prep.webp" width="1024" height="600" loading="lazy" alt="The pour-over prep checklist: kettle to 94 °C, weigh 15.4 g, grind, rinse, then tare.">
-        </article>
-        <article class="sq-card sq-rv" style="--d: 60ms">
-          <span class="sq-ico" v-html="ICON.journal" />
-          <h3>A journal that writes itself</h3>
-          <p>Every shot and pour is saved with dose, grind, time, yield and its curve. Rate it and add a note in seconds.</p>
-        </article>
-        <article class="sq-card sq-rv" style="--d: 120ms">
-          <span class="sq-ico" v-html="ICON.replay" />
-          <h3>Pull it again</h3>
-          <p>Pick a recipe or a brew you loved. Sipquel sets the grinder and gets the machine ready the same way.</p>
-        </article>
-        <article class="sq-card sq-card-tall sq-rv">
-          <div class="sq-card-copy">
-            <h3>Pour-over, guided</h3>
-            <p>Bloom, pour, swirl: each step with its target water, the weight live from your scale and the time it should take.</p>
-          </div>
-          <img src="/screens/pour.webp" width="1024" height="600" loading="lazy" alt="The guided pour-over screen during the bloom.">
-        </article>
-        <article class="sq-card sq-rv" style="--d: 60ms">
-          <span class="sq-ico" v-html="ICON.taste" />
-          <h3>Taste, in words</h3>
-          <p>Sour to bitter, acidity, sweetness, body. Simple notes that tell you which way to dial in next.</p>
-        </article>
-        <article class="sq-card sq-rv" style="--d: 120ms">
-          <span class="sq-ico" v-html="ICON.phone" />
-          <h3>On your phone too</h3>
-          <p>Open sipquel.local on the same Wi-Fi: the same bench, the same journal, from the sofa.</p>
-        </article>
-        <article class="sq-card sq-rv" style="--d: 60ms">
-          <span class="sq-ico" v-html="ICON.moon" />
-          <h3>Night and Day</h3>
-          <p>A calm dark theme for early mornings, a bright one for the afternoon.</p>
-        </article>
-        <article class="sq-card sq-rv" style="--d: 120ms">
-          <span class="sq-ico" v-html="ICON.lock" />
-          <h3>Yours, on your counter</h3>
-          <p>No account, no cloud, no subscription. Your coffees and your journal stay on the panel.</p>
+      <div class="sq-features">
+        <article v-for="(f, i) in features" :key="f.title" class="sq-feature sq-rv" :style="{ '--d': (i % 3) * 70 + 'ms' }">
+          <span class="sq-ico" v-html="ICON[f.icon]" />
+          <h3>{{ f.title }}</h3>
+          <p>{{ f.text }}</p>
         </article>
       </div>
     </section>
 
-    <!-- Real screens -->
+    <!-- Night / Day -->
     <section class="sq-section">
-      <header class="sq-head sq-rv">
-        <p class="sq-kicker">The real thing</p>
-        <h2>Designed for wet hands and early mornings.</h2>
-        <p class="sq-sub">Real captures from the panel. Switch between the Night and Day themes.</p>
+      <header class="sq-head sq-head-c sq-rv">
+        <p class="sq-kicker">Night &amp; Day</p>
+        <h2>Dark at dawn. Bright by noon.</h2>
+        <p class="sq-sub">Two themes, the same layout. Drag across the screen to compare.</p>
       </header>
-      <div class="sq-gallery-bar sq-rv">
-        <div class="sq-tabs" role="tablist" aria-label="Sipquel screens">
-          <button v-for="s in screens" :key="s.id" role="tab" :aria-selected="active === s.id" :class="{ on: active === s.id }" @click="active = s.id">{{ s.label }}</button>
-        </div>
-        <div class="sq-theme" role="group" aria-label="Theme">
-          <button :class="{ on: theme === 'night' }" :aria-pressed="theme === 'night'" @click="theme = 'night'"><span v-html="ICON.moon" />Night</button>
-          <button :class="{ on: theme === 'day' }" :aria-pressed="theme === 'day'" @click="theme = 'day'"><span v-html="ICON.sun" />Day</button>
-        </div>
+      <div class="sq-tabs sq-rv" role="tablist" aria-label="Screen to compare">
+        <button v-for="c in compare" :key="c.id" role="tab" :aria-selected="cmp === c.id" :class="{ on: cmp === c.id }" @click="cmp = c.id">{{ c.label }}</button>
       </div>
-      <div class="sq-gallery sq-rv" :class="'is-' + theme">
-        <div class="sq-gallery-stage">
-          <template v-for="s in screens" :key="s.id">
-            <img v-for="t in ['night', 'day']" :key="t" :class="{ show: active === s.id && theme === t }"
-                 :src="shot(s.id, t)" width="1024" height="600" loading="lazy"
-                 :alt="s.alt + (t === 'day' ? ' Day theme.' : ' Night theme.')" :aria-hidden="!(active === s.id && theme === t)" role="tabpanel">
-          </template>
+      <div class="sq-frame sq-frame-xl sq-rv">
+        <div class="sq-compare" :style="{ '--x': split + '%' }">
+          <img :src="img(cmp)" width="1024" height="600" loading="lazy" :alt="'Night theme: ' + compare.find(c => c.id === cmp)!.label">
+          <img class="sq-compare-day" :src="img(cmp, true)" width="1024" height="600" loading="lazy" :alt="'Day theme: ' + compare.find(c => c.id === cmp)!.label">
+          <div class="sq-compare-line" aria-hidden="true"><span>‹ ›</span></div>
+          <span class="sq-compare-tag l" aria-hidden="true">Night</span>
+          <span class="sq-compare-tag r" aria-hidden="true">Day</span>
+          <input v-model.number="split" type="range" min="0" max="100" step="1" aria-label="Compare the Night and Day themes">
         </div>
       </div>
     </section>
@@ -197,7 +242,7 @@ onBeforeUnmount(() => io?.disconnect())
       <header class="sq-head sq-rv">
         <p class="sq-kicker">Devices</p>
         <h2>Brings your gear together.</h2>
-        <p class="sq-sub">Sipquel connects over Bluetooth and Wi-Fi to the coffee gear you already own.</p>
+        <p class="sq-sub">Over Bluetooth and Wi-Fi, with the coffee gear you already own.</p>
       </header>
       <div class="sq-devices">
         <article v-for="(d, i) in devices" :key="d.name" class="sq-device-card sq-rv" :style="{ '--d': (i % 3) * 70 + 'ms' }">
@@ -212,23 +257,14 @@ onBeforeUnmount(() => io?.disconnect())
       <p class="sq-note"><a href="/guide/devices">What each device does with Sipquel →</a></p>
     </section>
 
-    <!-- Hardware + story -->
-    <section class="sq-section sq-split">
-      <div class="sq-rv">
-        <p class="sq-kicker">Why Sipquel</p>
-        <h2>A dedicated instrument, not another app.</h2>
-        <p class="sq-sub">
-          Phones lock, apps get buried, notebooks get wet. Sipquel is one screen that wakes up ready
-          next to the grinder, talks to every device on the bench, and remembers what made the good
-          cup good.
-        </p>
+    <!-- Specs -->
+    <section class="sq-section">
+      <div class="sq-band sq-rv">
+        <div><b>7″</b><span>1024 × 600 touchscreen</span></div>
+        <div><b>ESP32-P4</b><span>everything runs on the panel</span></div>
+        <div><b>BLE + Wi-Fi</b><span>scale, grinder, kettle, machine</span></div>
+        <div><b>0</b><span>accounts, clouds or subscriptions</span></div>
       </div>
-      <ul class="sq-specs">
-        <li class="sq-rv"><b>7″</b><span>1024 × 600 touchscreen</span></li>
-        <li class="sq-rv" style="--d: 70ms"><b>ESP32-P4</b><span>runs everything on the panel</span></li>
-        <li class="sq-rv" style="--d: 140ms"><b>BLE · Wi-Fi</b><span>scale, grinder, kettle and machine</span></li>
-        <li class="sq-rv" style="--d: 210ms"><b>0</b><span>accounts, clouds or subscriptions</span></li>
-      </ul>
     </section>
 
     <!-- FAQ -->
@@ -248,11 +284,11 @@ onBeforeUnmount(() => io?.disconnect())
 
     <!-- CTA -->
     <section class="sq-final sq-rv">
-      <div class="sq-glow sq-glow-2" aria-hidden="true" />
+      <div class="sq-lamp sq-lamp-2" aria-hidden="true" />
       <img src="/brand/sipquel-logo-night.svg" width="176" height="147" alt="Sipquel">
       <h2>Be one of the first to brew with it.</h2>
       <p class="sq-sub">The beta is almost ready. Join the Discord, tell us what is on your bench, and help shape what Sipquel becomes.</p>
-      <div class="sq-cta sq-cta-center">
+      <div class="sq-cta">
         <BetaButton label="Join the beta on Discord" />
         <a class="sq-btn sq-btn-ghost" href="/guide/what-is-sipquel">Read the guide</a>
       </div>
