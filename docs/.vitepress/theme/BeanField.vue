@@ -4,7 +4,7 @@
 // layer bounces and rolls off the top edge of the `collide` element.
 // Nothing is drawn with reduced motion.
 import { ref, onMounted, onBeforeUnmount } from 'vue'
-import { beanSprite } from './beanSprite.js'
+import { albedo, light, compose, blurred, shadow, PHASES } from './beanSprite.js'
 
 const props = defineProps<{ collide?: string; floor?: boolean }>()
 const cv = ref<HTMLCanvasElement | null>(null)
@@ -25,18 +25,22 @@ onMounted(() => {
   const dpr = Math.min(2, window.devicePixelRatio || 1)
   const target = props.collide ? document.querySelector<HTMLElement>(props.collide) : null
   let W = 0, H = 0, beans: Bean[] = [], raf = 0, last = 0, visible = true
+  // Each sharp bean is lit on a small scratch canvas, then stamped onto the field.
+  const sc = document.createElement('canvas'); sc.width = sc.height = 128
+  const sg = sc.getContext('2d')!
+  const TAU = Math.PI * 2
   const mouse = { x: -9999, y: -9999, vx: 0, vy: 0, on: false, t: 0 }
   const rnd = (a: number, b: number) => a + Math.random() * (b - a)
 
   // Three layers: far (small, soft, slow), middle (sharp, collides), near (large, very soft, fast).
   const make = (top: boolean, layer?: 0 | 1 | 2): Bean => {
     const l = layer ?? (Math.random() < .42 ? 0 : 1)
-    const r = l === 0 ? rnd(4, 6.5) : l === 1 ? rnd(8, 15) : rnd(30, 44)
+    const r = l === 0 ? rnd(4, 6.4) : l === 1 ? rnd(8, 15) : (Math.random() < .5 ? 32 : 40)
     const z = l === 0 ? rnd(0, .3) : l === 1 ? rnd(.4, .8) : 1
     return {
       x: rnd(0, W), y: top ? rnd(-140, -40) : rnd(-40, H), z, r: Math.round(r), a: rnd(0, 6.28), va: rnd(-1.2, 1.2), vx: 0, vy: 0,
-      fall: l === 0 ? rnd(14, 26) : l === 1 ? rnd(46, 84) : rnd(110, 150), sway: rnd(4, 16), ph: rnd(0, 6.28),
-      flip: rnd(0, 6.28), vflip: rnd(.5, 1.8) * (Math.random() < .5 ? -1 : 1),
+      fall: l === 0 ? rnd(14, 26) : l === 1 ? rnd(46, 84) : rnd(110, 150), sway: rnd(0, 5), ph: rnd(0, 6.28),
+      flip: rnd(0, 6.28), vflip: rnd(.6, 1.6) * (Math.random() < .5 ? -1 : 1),
       alpha: l === 0 ? rnd(.3, .5) : l === 1 ? rnd(.8, 1) : rnd(.3, .42), blur: l === 0 ? 1 : l === 2 ? 6 : 0,
       hit: l === 1, roll: 0, hops: 0, temp: false,
       tone: Math.floor(rnd(0, 3)), rest: rnd(0, 30), still: 0, life: rnd(5, 11),
@@ -80,7 +84,7 @@ onMounted(() => {
       b.vx *= 1 - drag * dt; b.vy *= 1 - drag * dt
       if (b.temp) b.vy += 620 * dt
       if (!b.still) {
-        b.va += (Math.sign(b.va || 1) * .7 - b.va) * .5 * dt
+        b.va += (Math.sign(b.va || 1) * .35 - b.va) * .5 * dt
         b.vflip += (Math.sign(b.vflip) * 1.1 - b.vflip) * .5 * dt
       }
       b.ph += dt; b.flip += b.vflip * dt
@@ -111,12 +115,21 @@ onMounted(() => {
       if (b.y > H + 60) { if (b.temp) { beans.splice(i, 1); continue } Object.assign(b, make(true, b.blur === 6 ? 2 : b.hit ? 1 : 0)) }
       if (b.x < -60) b.x = W + 60; else if (b.x > W + 60) b.x = -60
       // Tumbling: squash on one axis, and show the smooth back when turned over.
-      const c = Math.cos(b.flip), s = beanSprite(b.r, b.blur, c < 0, dpr, b.tone), half = s.width / dpr / 2
-      ctx.globalAlpha = b.alpha
-      ctx.setTransform(dpr, 0, 0, dpr, b.x * dpr, b.y * dpr)
-      ctx.rotate(b.a)
-      ctx.scale(1, .5 + .5 * Math.abs(c))
-      ctx.drawImage(s, -half, -half, half * 2, half * 2)
+      // Which step of its roll the bean is showing.
+      const phase = Math.floor((((b.flip % TAU) + TAU) % TAU) / TAU * PHASES) % PHASES
+      ctx.globalAlpha = Math.max(0, b.alpha)
+      if (b.blur) {
+        const s = blurred(b.r, b.blur, b.tone, phase - (phase % 4), dpr), half = s.width / dpr / 2
+        ctx.setTransform(dpr, 0, 0, dpr, b.x * dpr, b.y * dpr)
+        ctx.rotate(b.a)
+        ctx.drawImage(s, -half, -half, half * 2, half * 2)
+      } else {
+        const alb = albedo(b.r, b.tone, phase, dpr), S = alb.width
+        ctx.setTransform(1, 0, 0, 1, 0, 0)
+        if (b.still) { const sh = shadow(b.r, dpr); ctx.drawImage(sh, b.x * dpr - S / 2, (b.y + b.r * .5) * dpr - S / 2) }
+        compose(sg, S, dpr, b.a, alb, light(b.r, dpr))
+        ctx.drawImage(sc, 0, 0, S, S, b.x * dpr - S / 2, b.y * dpr - S / 2, S, S)
+      }
     }
   }
   const run = () => { cancelAnimationFrame(raf); if (visible && !document.hidden) { last = performance.now(); raf = requestAnimationFrame(frame) } }
