@@ -263,7 +263,8 @@
 /* Final call */
 .sq-final { position: relative; overflow: hidden; max-width: 1280px; margin: clamp(90px, 11vw, 150px) auto clamp(56px, 7vw, 96px); padding: clamp(56px, 8vw, 110px) var(--pad);
   text-align: center; border-radius: 36px; background: linear-gradient(180deg, var(--sq-surface), var(--sq-bg)); border: 1px solid var(--sq-line); }
-.sq-final > *:not(.sq-lamp) { position: relative; z-index: 1; }
+.sq-final > *:not(.sq-lamp):not(.sq-beans) { position: relative; z-index: 1; }
+.sq-final .sq-beans { left: 0; width: 100%; transform: none; -webkit-mask-image: none; mask-image: none; opacity: .8; }
 .sq-final img { width: 132px; height: auto; margin: 0 auto 10px; display: block; }
 .sq-final .sq-sub { margin-inline: auto; }
 .sq-lamp-2 { top: auto; bottom: -520px; height: 800px; }
