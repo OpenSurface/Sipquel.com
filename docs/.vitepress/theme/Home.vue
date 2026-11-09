@@ -148,12 +148,19 @@ const stage = ref<HTMLElement | null>(null)
 const words = ref<HTMLElement | null>(null)
 let ticking = false
 const clamp = (x: number) => Math.max(0, Math.min(1, x))
+const prog = ref(0)
+const floatOn = ref(false)
+const finalEl = ref<HTMLElement | null>(null)
+let motion = false
 function onScroll() {
   if (ticking) return
   ticking = true
   requestAnimationFrame(() => {
     ticking = false
-    const vh = window.innerHeight
+    const vh = window.innerHeight, doc = document.documentElement
+    prog.value = clamp(window.scrollY / Math.max(1, doc.scrollHeight - vh))
+    floatOn.value = window.scrollY > vh * .9 && (!finalEl.value || finalEl.value.getBoundingClientRect().top > vh * .8)
+    if (!motion) return
     if (stage.value) stage.value.style.setProperty('--t', clamp((vh - stage.value.getBoundingClientRect().top) / (vh * .72)).toFixed(3))
     if (words.value) {
       const r = words.value.getBoundingClientRect()
@@ -170,10 +177,11 @@ onMounted(() => {
   }, { rootMargin: '-45% 0px -45% 0px' })
   root.value.querySelectorAll('.sq-story-step').forEach((el) => steps!.observe(el))
 
-  if (still()) return
+  motion = !still()
   window.addEventListener('scroll', onScroll, { passive: true })
   window.addEventListener('resize', onScroll, { passive: true })
   onScroll()
+  if (!motion) return
   if (cmpEl.value) {
     hint = new IntersectionObserver((list) => {
       if (list.some((en) => en.isIntersecting)) { hint?.disconnect(); setTimeout(() => { if (!touched.value) sweep() }, 500) }
@@ -193,6 +201,8 @@ onBeforeUnmount(() => { reveal?.disconnect(); steps?.disconnect(); hint?.disconn
 
 <template>
   <div ref="root" class="sq">
+    <div class="sq-progress" aria-hidden="true" :style="{ transform: `scaleX(${prog})` }" />
+    <div class="sq-float" :class="{ show: floatOn }" :inert="!floatOn"><BetaButton /></div>
     <!-- Hero -->
     <section class="sq-hero">
       <div class="sq-lamp" aria-hidden="true" />
@@ -432,9 +442,9 @@ onBeforeUnmount(() => { reveal?.disconnect(); steps?.disconnect(); hint?.disconn
     </section>
 
     <!-- CTA -->
-    <section class="sq-final sq-rv">
+    <section ref="finalEl" class="sq-final sq-rv">
       <div class="sq-lamp sq-lamp-2" aria-hidden="true" />
-      <ClientOnly><BeanField /></ClientOnly>
+      <ClientOnly><BeanField floor /></ClientOnly>
       <img src="/brand/sipquel-logo-night.svg" width="176" height="147" alt="Sipquel">
       <h2>Be one of the first<br><em>to brew with it.</em></h2>
       <p class="sq-sub">The beta is almost ready. Join the Discord, tell us what is on your bench, and help shape what Sipquel becomes.</p>
