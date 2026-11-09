@@ -2,7 +2,6 @@
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 import DeviceArt from './DeviceArt.vue'
 import BetaButton from './BetaButton.vue'
-import LiveShot from './LiveShot.vue'
 import { BETA_URL, GITHUB_URL } from './site'
 
 const steps = [
@@ -31,9 +30,6 @@ const ICON: Record<string, string> = {
   moon: svg('<path d="M20 14.5A8 8 0 0 1 9.5 4 7 7 0 1 0 20 14.5z"/>'),
   sun: svg('<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>'),
   lock: svg('<rect x="5" y="10" width="14" height="10" rx="2.5"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/>'),
-  check: svg('<path d="M5 12.5l4.5 4.5L19 7.5"/>'),
-  spark: svg('<path d="M12 3v4M12 17v4M3 12h4M17 12h4M6.3 6.3l2.5 2.5M15.2 15.2l2.5 2.5M6.3 17.7l2.5-2.5M15.2 8.8l2.5-2.5"/>'),
-  plus: svg('<path d="M12 5v14M5 12h14"/>'),
 }
 
 const devices = [
@@ -45,12 +41,6 @@ const devices = [
   { art: 'decent', name: 'Decent Espresso', kind: 'Espresso machine', status: 'Coming' },
 ]
 
-const roadmap = [
-  { when: 'Now', tag: 'In the beta', icon: 'check', items: ['Live espresso graph and shot details', 'Guided pour-over with live weight', 'A journal that saves every brew', 'BOOKOO Themis and Motto80', 'Gaggiuino machines', 'The phone companion at sipquel.local'] },
-  { when: 'Next', tag: 'Being built', icon: 'spark', items: ['GaggiMate machines', 'Decent Espresso', 'Fellow Stagg EKG, out of experimental', 'Coffee and recipe editing from the phone'] },
-  { when: 'Later', tag: 'You decide', icon: 'plus', items: ['More scales and grinders', 'Whatever the beta asks for most'] },
-]
-
 const faq = [
   { q: 'When can I get it?', a: 'The beta opens soon. Join the Sipquel Discord to be among the first: builds, release notes and help all live there.' },
   { q: 'What hardware do I need?', a: 'A 7-inch ESP32-P4 touchscreen panel (1024 × 600) and at least one supported scale, grinder or machine. The exact panel and where to buy it will be posted in the beta.' },
@@ -59,29 +49,10 @@ const faq = [
   { q: 'Where is my data kept?', a: 'On the panel, optionally on its SD card. Nothing is sent to a cloud.' },
 ]
 
-// Hero device follows the pointer a little; feature cards get a soft
-// spotlight under the cursor; sections fade in once as they scroll into view.
-// All three are skipped when the reader prefers reduced motion.
+// Sections fade in once as they scroll into view (never with reduced motion).
 const root = ref<HTMLElement | null>(null)
-const device = ref<HTMLElement | null>(null)
 let io: IntersectionObserver | null = null
 const still = () => typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches
-
-function tilt(e: PointerEvent) {
-  const el = device.value
-  if (!el || still() || e.pointerType !== 'mouse') return
-  const b = el.getBoundingClientRect()
-  el.style.setProperty('--ry', `${((e.clientX - b.left) / b.width - .5) * 14 - 8}deg`)
-  el.style.setProperty('--rx', `${(.5 - (e.clientY - b.top) / b.height) * 10 + 3}deg`)
-}
-function untilt() { device.value?.style.removeProperty('--ry'); device.value?.style.removeProperty('--rx') }
-function spot(e: PointerEvent) {
-  const card = (e.target as HTMLElement).closest<HTMLElement>('.sq-spot')
-  if (!card) return
-  const b = card.getBoundingClientRect()
-  card.style.setProperty('--mx', `${e.clientX - b.left}px`)
-  card.style.setProperty('--my', `${e.clientY - b.top}px`)
-}
 
 onMounted(() => {
   if (still() || !('IntersectionObserver' in window) || !root.value) return
@@ -98,7 +69,6 @@ onBeforeUnmount(() => io?.disconnect())
   <div ref="root" class="sq">
     <!-- Hero -->
     <section class="sq-hero">
-      <div class="sq-grid-bg" aria-hidden="true" />
       <div class="sq-glow" aria-hidden="true" />
       <div class="sq-hero-copy">
         <a class="sq-pill" :href="BETA_URL" target="_blank" rel="noopener">
@@ -111,33 +81,19 @@ onBeforeUnmount(() => io?.disconnect())
         </p>
         <div class="sq-cta">
           <BetaButton />
-          <a class="sq-btn sq-btn-ghost" href="#shot">Watch a shot</a>
+          <a class="sq-btn sq-btn-ghost" href="/guide/how-it-works">How it works</a>
         </div>
         <p class="sq-trust">Works with <b>BOOKOO</b> · <b>Gaggiuino</b> · <b>Fellow</b> <span>(experimental)</span></p>
       </div>
 
-      <div class="sq-hero-device" @pointermove="tilt" @pointerleave="untilt">
-        <svg class="sq-curve" viewBox="0 0 600 220" aria-hidden="true">
-          <path class="sq-curve-p" d="M0 200 C60 200 80 60 150 52 S260 48 330 50 S470 60 600 58" />
-          <path class="sq-curve-f" d="M0 210 C70 210 90 140 160 132 S290 150 360 128 S500 120 600 126" />
-        </svg>
-        <div ref="device" class="sq-device">
+      <div class="sq-hero-device">
+        <div class="sq-device">
           <div class="sq-bezel">
             <img src="/screens/home.webp" width="1024" height="600" alt="The Sipquel touchscreen on its Home page." fetchpriority="high">
-            <span class="sq-glare" aria-hidden="true" />
           </div>
         </div>
-        <div class="sq-chip sq-chip-a"><small>Dose</small><b>18.2</b><i>g</i></div>
-        <div class="sq-chip sq-chip-b"><small>Grind</small><b>465</b><i>µm</i></div>
-        <div class="sq-chip sq-chip-c"><small>Pressure</small><b>9.0</b><i>bar</i></div>
       </div>
     </section>
-
-    <div class="sq-marquee" aria-hidden="true">
-      <div class="sq-marquee-track">
-        <span v-for="i in 2" :key="i">Dose<i>·</i>Grind<i>·</i>Brew<i>·</i>Taste<i>·</i>Remember<i>·</i>Repeat<i>·</i></span>
-      </div>
-    </div>
 
     <!-- The workflow -->
     <section class="sq-section">
@@ -155,68 +111,53 @@ onBeforeUnmount(() => io?.disconnect())
       </ol>
     </section>
 
-    <!-- Live shot -->
-    <section id="shot" class="sq-section sq-shot">
-      <header class="sq-head sq-rv">
-        <p class="sq-kicker">Watch a shot</p>
-        <h2>Know how the shot is going while it pours.</h2>
-        <p class="sq-sub">This is the Brewing screen. The machine sends pressure and flow, the scale sends the cup weight, and Sipquel puts them together against your recipe: 18.2 g in, 36.4 g out, in 28 ± 2 s.</p>
-      </header>
-      <div class="sq-rv"><LiveShot /></div>
-      <ul class="sq-shot-explain">
-        <li class="sq-rv"><h3>The ring is your cup</h3><p>It fills with the weight from the scale. The hollow marker is where the recipe says the cup should be right now, so you see at a glance if the shot runs fast or slow.</p></li>
-        <li class="sq-rv" style="--d: 80ms"><h3>The dashed line is the plan</h3><p>Your machine profile: a 3 bar soak, a ramp to 9 bar, then a gentle decline. The live pressure is drawn over it, phase by phase.</p></li>
-        <li class="sq-rv" style="--d: 160ms"><h3>The pace tells you the finish</h3><p>From the cup's own speed, Sipquel says when the shot will reach its stop weight, and whether that lands inside your aim.</p></li>
-      </ul>
-    </section>
-
     <!-- Features -->
     <section id="features" class="sq-section">
       <header class="sq-head sq-rv">
         <p class="sq-kicker">Features</p>
         <h2>Everything you used to write down, written down for you.</h2>
       </header>
-      <div class="sq-bento" @pointermove="spot">
-        <article class="sq-card sq-card-wide sq-spot sq-rv">
+      <div class="sq-bento">
+        <article class="sq-card sq-card-wide sq-rv">
           <div class="sq-card-copy">
             <h3>Prep, step by step</h3>
             <p>Before the brew, a short checklist from your recipe: heat the kettle, weigh the dose, grind, rinse, tare.</p>
           </div>
           <img src="/screens/prep.webp" width="1024" height="600" loading="lazy" alt="The pour-over prep checklist: kettle to 94 °C, weigh 15.4 g, grind, rinse, then tare.">
         </article>
-        <article class="sq-card sq-spot sq-rv" style="--d: 60ms">
+        <article class="sq-card sq-rv" style="--d: 60ms">
           <span class="sq-ico" v-html="ICON.journal" />
           <h3>A journal that writes itself</h3>
           <p>Every shot and pour is saved with dose, grind, time, yield and its curve. Rate it and add a note in seconds.</p>
         </article>
-        <article class="sq-card sq-spot sq-rv" style="--d: 120ms">
+        <article class="sq-card sq-rv" style="--d: 120ms">
           <span class="sq-ico" v-html="ICON.replay" />
           <h3>Pull it again</h3>
           <p>Pick a recipe or a brew you loved. Sipquel sets the grinder and gets the machine ready the same way.</p>
         </article>
-        <article class="sq-card sq-card-tall sq-spot sq-rv">
+        <article class="sq-card sq-card-tall sq-rv">
           <div class="sq-card-copy">
             <h3>Pour-over, guided</h3>
             <p>Bloom, pour, swirl: each step with its target water, the weight live from your scale and the time it should take.</p>
           </div>
           <img src="/screens/pour.webp" width="1024" height="600" loading="lazy" alt="The guided pour-over screen during the bloom.">
         </article>
-        <article class="sq-card sq-spot sq-rv" style="--d: 60ms">
+        <article class="sq-card sq-rv" style="--d: 60ms">
           <span class="sq-ico" v-html="ICON.taste" />
           <h3>Taste, in words</h3>
           <p>Sour to bitter, acidity, sweetness, body. Simple notes that tell you which way to dial in next.</p>
         </article>
-        <article class="sq-card sq-spot sq-rv" style="--d: 120ms">
+        <article class="sq-card sq-rv" style="--d: 120ms">
           <span class="sq-ico" v-html="ICON.phone" />
           <h3>On your phone too</h3>
           <p>Open sipquel.local on the same Wi-Fi: the same bench, the same journal, from the sofa.</p>
         </article>
-        <article class="sq-card sq-spot sq-rv" style="--d: 60ms">
+        <article class="sq-card sq-rv" style="--d: 60ms">
           <span class="sq-ico" v-html="ICON.moon" />
           <h3>Night and Day</h3>
           <p>A calm dark theme for early mornings, a bright one for the afternoon.</p>
         </article>
-        <article class="sq-card sq-spot sq-rv" style="--d: 120ms">
+        <article class="sq-card sq-rv" style="--d: 120ms">
           <span class="sq-ico" v-html="ICON.lock" />
           <h3>Yours, on your counter</h3>
           <p>No account, no cloud, no subscription. Your coffees and your journal stay on the panel.</p>
@@ -284,29 +225,10 @@ onBeforeUnmount(() => io?.disconnect())
       </div>
       <ul class="sq-specs">
         <li class="sq-rv"><b>7″</b><span>1024 × 600 touchscreen</span></li>
-        <li class="sq-rv" style="--d: 70ms"><b>ESP32-P4</b><span>fast, quiet, always on</span></li>
+        <li class="sq-rv" style="--d: 70ms"><b>ESP32-P4</b><span>runs everything on the panel</span></li>
         <li class="sq-rv" style="--d: 140ms"><b>BLE · Wi-Fi</b><span>scale, grinder, kettle and machine</span></li>
         <li class="sq-rv" style="--d: 210ms"><b>0</b><span>accounts, clouds or subscriptions</span></li>
       </ul>
-    </section>
-
-    <!-- Roadmap -->
-    <section class="sq-section">
-      <header class="sq-head sq-rv">
-        <p class="sq-kicker">Roadmap</p>
-        <h2>Where Sipquel is going.</h2>
-        <p class="sq-sub">What works in the beta today, what is being built, and what the beta testers will decide.</p>
-      </header>
-      <div class="sq-road">
-        <article v-for="(r, i) in roadmap" :key="r.when" class="sq-road-col sq-rv" :class="'is-' + r.when.toLowerCase()" :style="{ '--d': i * 90 + 'ms' }">
-          <header>
-            <span class="sq-road-ico" v-html="ICON[r.icon]" />
-            <h3>{{ r.when }}</h3>
-            <span class="sq-road-tag">{{ r.tag }}</span>
-          </header>
-          <ul><li v-for="it in r.items" :key="it">{{ it }}</li></ul>
-        </article>
-      </div>
     </section>
 
     <!-- FAQ -->
