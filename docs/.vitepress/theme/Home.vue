@@ -35,6 +35,26 @@ const story = [
 ]
 const cur = ref(0)
 
+const manifesto = [
+  ...'Weigh the beans. Set the grinder. Watch the shot.'.split(' ').map((w) => ({ w, g: false })),
+  ...'Sipquel remembers the rest.'.split(' ').map((w) => ({ w, g: true })),
+]
+const lit = ref(manifesto.length)
+
+const wall = [
+  { id: 'recipe', title: 'Recipes that carry everything', text: 'Dose, yield, ratio, time, temperature and grind for each coffee, with the machine profile and grinder speeds that go with it.',
+    alt: 'An espresso recipe for Guji Hambela: 18.2 g in, 36.4 g out, 1:2.00, 28 s, 93 °C, 465 µm, with the Turbo bloom profile.' },
+  { id: 'bag', title: 'Know every bag', text: 'Roaster, origin, process, roast date and tasting notes, with the grams left counted down as you brew.',
+    alt: 'Editing a coffee bag: Guji Hambela from Square Mile, washed, light roast, 142 g left of 250 g, notes of bergamot, peach and floral.' },
+  { id: 'grinder', title: 'Your grinder, on screen', text: 'Grind size in microns, burr speed, feeder and presets, live from the grinder and set from the recipe.',
+    alt: 'The Motto80 grinder page: grind size 110 µm, burr speed 1200 rpm, feeder 60 rpm, and 147 lifetime grinds.' },
+  { id: 'steep', title: 'Immersion brews too', text: 'AeroPress and French press get their own guide: steep, swirl, settle and press, each with its time.',
+    alt: 'An AeroPress steep: 0:50 left, then swirl at 2:00, with the steps Pour, Plunger in, Steep, Swirl, Settle and Press.' },
+]
+const zoom = ref(wall[0])
+const box = ref<HTMLDialogElement | null>(null)
+function openBox(w: typeof wall[number]) { zoom.value = w; box.value?.showModal() }
+
 const compare = [
   { id: 'home', label: 'Home' },
   { id: 'brew', label: 'Brewing' },
@@ -109,6 +129,25 @@ let reveal: IntersectionObserver | null = null
 let steps: IntersectionObserver | null = null
 const still = () => typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches
 
+// Scroll-linked: the hero panel tilts up to face you, and the manifesto lights word by word.
+const stage = ref<HTMLElement | null>(null)
+const words = ref<HTMLElement | null>(null)
+let ticking = false
+const clamp = (x: number) => Math.max(0, Math.min(1, x))
+function onScroll() {
+  if (ticking) return
+  ticking = true
+  requestAnimationFrame(() => {
+    ticking = false
+    const vh = window.innerHeight
+    if (stage.value) stage.value.style.setProperty('--t', clamp((vh - stage.value.getBoundingClientRect().top) / (vh * .72)).toFixed(3))
+    if (words.value) {
+      const r = words.value.getBoundingClientRect()
+      lit.value = Math.round(clamp((vh * .82 - r.top) / (vh * .42 + r.height)) * manifesto.length)
+    }
+  })
+}
+
 onMounted(() => {
   if (!root.value || !('IntersectionObserver' in window)) return
   // The pinned screen follows whichever story step crosses the middle of the viewport.
@@ -118,6 +157,9 @@ onMounted(() => {
   root.value.querySelectorAll('.sq-story-step').forEach((el) => steps!.observe(el))
 
   if (still()) return
+  window.addEventListener('scroll', onScroll, { passive: true })
+  window.addEventListener('resize', onScroll, { passive: true })
+  onScroll()
   if (cmpEl.value) {
     hint = new IntersectionObserver((list) => {
       if (list.some((en) => en.isIntersecting)) { hint?.disconnect(); setTimeout(() => { if (!touched.value) sweep() }, 500) }
@@ -130,7 +172,9 @@ onMounted(() => {
   root.value.querySelectorAll('.sq-rv').forEach((el) => reveal!.observe(el))
   root.value.classList.add('sq-reveal')
 })
-onBeforeUnmount(() => { reveal?.disconnect(); steps?.disconnect(); hint?.disconnect(); cancelAnimationFrame(raf) })
+onBeforeUnmount(() => { reveal?.disconnect(); steps?.disconnect(); hint?.disconnect(); cancelAnimationFrame(raf)
+  window.removeEventListener('scroll', onScroll); window.removeEventListener('resize', onScroll)
+})
 </script>
 
 <template>
@@ -151,21 +195,26 @@ onBeforeUnmount(() => { reveal?.disconnect(); steps?.disconnect(); hint?.disconn
         <a class="sq-btn sq-btn-ghost" href="#story">See a shot</a>
       </div>
 
-      <div class="sq-hero-stage">
-        <div class="sq-frame sq-frame-xl">
-          <img class="sq-ambient" src="/screens/home.webp" alt="" aria-hidden="true">
-          <img src="/screens/home.webp" width="1024" height="600" alt="The Sipquel touchscreen on its Home page: the boiler gauge heading for 93 °C, the next shot, the grinder and this week's brews." fetchpriority="high">
+      <div ref="stage" class="sq-hero-stage">
+        <div class="sq-frame sq-frame-xl sq-tilt">
+          <img class="sq-ambient" src="/screens/bench.webp" alt="" aria-hidden="true">
+          <img src="/screens/bench.webp" width="1024" height="600" alt="The Sipquel Home screen: the boiler at 88.5 °C heading for 93, the next shot at 18.2 g in and 36 g out, the grinder at 472 µm, the coffee on day 12 with 142 g left, and the last brew rated four stars." fetchpriority="high">
         </div>
         <div class="sq-counter" aria-hidden="true" />
       </div>
       <p class="sq-trust">Works with <b>BOOKOO</b><i /><b>Gaggiuino</b><i /><b>Fellow</b> <span>experimental</span></p>
     </section>
 
+    <!-- Manifesto -->
+    <section class="sq-manifesto">
+      <p ref="words"><template v-for="(m, i) in manifesto" :key="i"><span :class="{ lit: i < lit, g: m.g }">{{ m.w }}</span>{{ ' ' }}</template></p>
+    </section>
+
     <!-- Story: one espresso, start to finish -->
     <section id="story" class="sq-section sq-story">
       <header class="sq-head sq-head-c sq-rv">
         <p class="sq-kicker">Espresso, start to finish</p>
-        <h2>One shot. Four steps.<br><span class="sq-dim">Nothing to write down.</span></h2>
+        <h2>One shot. Four steps.<br><em>Nothing to write down.</em></h2>
       </header>
 
       <div class="sq-story-grid">
@@ -203,7 +252,7 @@ onBeforeUnmount(() => { reveal?.disconnect(); steps?.disconnect(); hint?.disconn
     <section class="sq-section sq-pour">
       <div class="sq-pour-copy sq-rv">
         <p class="sq-kicker">Pour-over</p>
-        <h2>Every pour,<br>against the plan.</h2>
+        <h2>Every pour,<br><em>against the plan.</em></h2>
         <p class="sq-sub">
           Bloom, pour, swirl, drawdown. Each step shows its target water and time while your scale
           fills the dial. When it is done, the brew is laid over the plan so you can see where it drifted.
@@ -225,7 +274,7 @@ onBeforeUnmount(() => { reveal?.disconnect(); steps?.disconnect(); hint?.disconn
     <section class="sq-section sq-traces">
       <header class="sq-head sq-head-c sq-rv">
         <p class="sq-kicker">The journal</p>
-        <h2>Read any shot back.</h2>
+        <h2>Read any shot <em>back.</em></h2>
         <p class="sq-sub">Open a brew and its whole extraction is there: pressure, pump flow, yield, boiler and weight flow on one chart, the targets dashed, every reading alongside.</p>
       </header>
       <div class="sq-rv"><div class="sq-frame sq-frame-xl">
@@ -234,11 +283,29 @@ onBeforeUnmount(() => { reveal?.disconnect(); steps?.disconnect(); hint?.disconn
       </div></div>
     </section>
 
+    <!-- The rest of the bench -->
+    <section class="sq-section">
+      <header class="sq-head sq-rv">
+        <p class="sq-kicker">The whole bench</p>
+        <h2>Coffee, recipe, grinder. <em>Each has its screen.</em></h2>
+        <p class="sq-sub">Tap a screen to see it full size.</p>
+      </header>
+      <div class="sq-wall">
+        <article v-for="(w, i) in wall" :key="w.id" class="sq-wall-card sq-rv" :style="{ '--d': (i % 2) * 90 + 'ms' }">
+          <button type="button" class="sq-frame sq-wall-shot" :aria-label="'Enlarge: ' + w.title" @click="openBox(w)">
+            <img :src="img(w.id)" width="1024" height="600" loading="lazy" :alt="w.alt">
+          </button>
+          <h3>{{ w.title }}</h3>
+          <p>{{ w.text }}</p>
+        </article>
+      </div>
+    </section>
+
     <!-- Features -->
     <section id="features" class="sq-section">
       <header class="sq-head sq-rv">
         <p class="sq-kicker">And the rest</p>
-        <h2>Small things that add up to a better cup.</h2>
+        <h2>Small things that add up to <em>a better cup.</em></h2>
       </header>
       <div class="sq-features">
         <article v-for="(f, i) in features" :key="f.title" class="sq-feature sq-rv" :style="{ '--d': (i % 3) * 70 + 'ms' }">
@@ -253,7 +320,7 @@ onBeforeUnmount(() => { reveal?.disconnect(); steps?.disconnect(); hint?.disconn
     <section class="sq-section">
       <header class="sq-head sq-head-c sq-rv">
         <p class="sq-kicker">Night &amp; Day</p>
-        <h2>Dark at dawn. Bright by noon.</h2>
+        <h2>Dark at dawn. <em>Bright by noon.</em></h2>
         <p class="sq-sub">Two themes, the same layout. Drag across the screen to compare.</p>
       </header>
       <div class="sq-tabs sq-rv" role="tablist" aria-label="Screen to compare">
@@ -275,7 +342,7 @@ onBeforeUnmount(() => { reveal?.disconnect(); steps?.disconnect(); hint?.disconn
     <section class="sq-section">
       <header class="sq-head sq-rv">
         <p class="sq-kicker">Devices</p>
-        <h2>Brings your gear together.</h2>
+        <h2>Brings your gear <em>together.</em></h2>
         <p class="sq-sub">Over Bluetooth and Wi-Fi, with the coffee gear you already own.</p>
       </header>
       <div class="sq-devices">
@@ -305,7 +372,7 @@ onBeforeUnmount(() => { reveal?.disconnect(); steps?.disconnect(); hint?.disconn
     <section class="sq-section sq-faq-wrap">
       <header class="sq-head sq-rv">
         <p class="sq-kicker">Questions</p>
-        <h2>Good to know.</h2>
+        <h2>Good to <em>know.</em></h2>
         <p class="sq-sub">More in the <a href="/guide/faq">full FAQ</a>, or ask on Discord.</p>
       </header>
       <div class="sq-faq">
@@ -320,13 +387,18 @@ onBeforeUnmount(() => { reveal?.disconnect(); steps?.disconnect(); hint?.disconn
     <section class="sq-final sq-rv">
       <div class="sq-lamp sq-lamp-2" aria-hidden="true" />
       <img src="/brand/sipquel-logo-night.svg" width="176" height="147" alt="Sipquel">
-      <h2>Be one of the first to brew with it.</h2>
+      <h2>Be one of the first<br><em>to brew with it.</em></h2>
       <p class="sq-sub">The beta is almost ready. Join the Discord, tell us what is on your bench, and help shape what Sipquel becomes.</p>
       <div class="sq-cta">
         <BetaButton label="Join the beta on Discord" />
         <a class="sq-btn sq-btn-ghost" href="/guide/what-is-sipquel">Read the guide</a>
       </div>
     </section>
+
+    <dialog ref="box" class="sq-box" :aria-label="zoom.title" @click="box?.close()">
+      <img :src="img(zoom.id)" width="1024" height="600" :alt="zoom.alt">
+      <p>{{ zoom.title }}<span>Click anywhere to close</span></p>
+    </dialog>
 
     <!-- Footer -->
     <footer class="sq-foot">
