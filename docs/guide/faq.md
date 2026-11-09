@@ -2,7 +2,7 @@
 
 ## When can I get it?
 
-The beta opens soon. [Join the beta](/guide/beta) to be among the first.
+The beta opens soon. [Join the Sipquel Discord](https://discord.gg/mCAuV6bRP) to be among the first.
 
 ## Do I need a phone or an account?
 

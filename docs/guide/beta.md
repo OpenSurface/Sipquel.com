@@ -10,6 +10,11 @@ The Sipquel beta is almost ready. Beta testers get the firmware early, help find
 
 ## How to join
 
-The beta is organised in the Sipquel Slack. The invite link will be posted here.
+The beta runs on the **Sipquel Discord**. Join the server, say hello and tell us what is on your bench. Beta builds, release notes and bug reports all live there.
 
-<BetaButton label="Join the beta on Slack" />
+<BetaButton label="Join the beta on Discord" discord />
+
+## What you'll need
+
+- A 7-inch ESP32-P4 touchscreen panel (see [Hardware](/guide/hardware)).
+- At least one supported scale, grinder or machine.

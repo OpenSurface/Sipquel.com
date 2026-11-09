@@ -9,6 +9,7 @@ import './custom.css'
 import Home from './Home.vue'
 import DeviceArt from './DeviceArt.vue'
 import BetaButton from './BetaButton.vue'
+import LiveShot from './LiveShot.vue'
 
 export default {
   extends: DefaultTheme,
@@ -16,5 +17,6 @@ export default {
     app.component('Home', Home)
     app.component('DeviceArt', DeviceArt)
     app.component('BetaButton', BetaButton)
+    app.component('LiveShot', LiveShot)
   },
 } satisfies Theme

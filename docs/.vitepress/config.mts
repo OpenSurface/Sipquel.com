@@ -1,6 +1,6 @@
 import { defineConfig } from 'vitepress'
 // The beta link lives in theme/site.ts, shared with the pages.
-import { betaLink } from './theme/site.ts'
+import { betaLink, BETA_URL } from './theme/site.ts'
 
 const SITE = 'https://sipquel.com'
 const DESCRIPTION =
@@ -44,7 +44,7 @@ export default defineConfig({
       { text: 'Devices', link: '/guide/devices' },
       { text: 'How it works', link: '/guide/how-it-works' },
       { text: 'FAQ', link: '/guide/faq' },
-      { text: 'Join the beta', link: betaLink() },
+      { text: 'Join the beta', link: betaLink(), target: '_blank', rel: 'noopener' },
     ],
 
     sidebar: {
@@ -68,7 +68,10 @@ export default defineConfig({
       ],
     },
 
-    socialLinks: [{ icon: 'github', link: 'https://github.com/OpenSurface' }],
+    socialLinks: [
+      { icon: 'discord', link: BETA_URL, ariaLabel: 'Sipquel on Discord' },
+      { icon: 'github', link: 'https://github.com/OpenSurface', ariaLabel: 'OpenSurface on GitHub' },
+    ],
     search: { provider: 'local' },
     outline: { level: [2, 3] },
 

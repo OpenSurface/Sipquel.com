@@ -19,7 +19,7 @@ npm run docs:build    # output in docs/.vitepress/dist
 | `docs/index.md` | The home page; it renders `theme/Home.vue` |
 | `docs/guide/` | The guide pages |
 | `docs/.vitepress/config.mts` | Navigation, sidebar, share card and meta tags |
-| `docs/.vitepress/theme/site.ts` | **`BETA_URL`**: paste the Slack invite link here |
+| `docs/.vitepress/theme/site.ts` | **`BETA_URL`**: the Discord invite every beta button opens |
 | `docs/.vitepress/theme/custom.css` | The Sipquel look (colours, type, layout) |
 | `docs/public/` | Images, logo, favicon, share card, CNAME |
 
