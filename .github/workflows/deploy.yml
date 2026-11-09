@@ -1,0 +1,66 @@
+name: Deploy sipquel.com
+
+# Builds the VitePress site in docs/ and publishes it to GitHub Pages.
+# The custom domain comes from docs/public/CNAME (sipquel.com).
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'docs/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/workflows/deploy.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Build
+        run: npm run docs:build
+
+      # Fail loudly instead of publishing a site without its home page,
+      # its custom domain or its share card.
+      - name: Verify the built site
+        run: |
+          DIST=docs/.vitepress/dist
+          for f in index.html CNAME og-card.png favicon.svg guide/beta.html screens/home.webp; do
+            if [ -s "$DIST/$f" ]; then echo "ok  $f"; else echo "::error::$f missing from the build"; exit 1; fi
+          done
+          grep -qx 'sipquel.com' "$DIST/CNAME" || { echo "::error::CNAME is not sipquel.com"; exit 1; }
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs/.vitepress/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
