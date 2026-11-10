@@ -1,10 +1,10 @@
 {
  "schema": 1,
  "board": "p4_7inch",
- "version": "0.3.1",
- "size": 6209600,
- "sha256": "4324e310aac3dbf31a6b7495a3d5d916cb6fd736a699d130172b052b965e8cba",
- "url": "https://raw.githubusercontent.com/OpenSurface/Sipquel.com/main/docs/public/firmware/p4_7inch/sipquel-0.3.1.bin",
- "notes": "Updates without restarting first; no blue screen",
- "signature": "MEYCIQD2yv0n+02O+saZ3DS8lPJnLYtaKdA2g50eiFYaoCkgJAIhANkphD/n6OFJknsgBpcHIWZeaPBYfkosMHpAlEvHaxkL"
+ "version": "0.3.2",
+ "size": 6209712,
+ "sha256": "baa0b676b9b060e44ba444df71da2a9d039c7cbbbd6e1df1ae82228da0bfaf22",
+ "url": "https://raw.githubusercontent.com/OpenSurface/Sipquel.com/main/docs/public/firmware/p4_7inch/sipquel-0.3.2.bin",
+ "notes": "Download keeps more memory free for the radios",
+ "signature": "MEUCIQDSrBz3rVA4GcrZAXau2tGBChdx10nK69LF7BA9ce8YZQIgTCE8AiOJ80lK8UirMYVU7L+QYP9sJQm/MWTQWCDVtd0="
 }
