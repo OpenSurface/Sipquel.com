@@ -1,10 +1,10 @@
 {
  "schema": 1,
  "board": "p4_7inch",
- "version": "0.3.9",
- "size": 6212256,
- "sha256": "9cbfce1caa8ac2a7f6b78a85b6a3708c67de46a59606a60f47247b4d8a3a80d5",
- "url": "https://raw.githubusercontent.com/OpenSurface/Sipquel.com/main/docs/public/firmware/p4_7inch/sipquel-0.3.9.bin",
- "notes": "Best shot behind the live graph; update no longer stops at 99%",
- "signature": "MEUCIQDgzhoMtZnylvDfKhNC0cxrQ77NKQ7zZHb3FMWTg8jcQAIgfIQiopB23s6+HNwbF8G5PDLqN2dNmaUqnNc6bqC+2ig="
+ "version": "0.3.10",
+ "size": 6213152,
+ "sha256": "0432b0531238b1ac88a7a521e7263bdb515d341c150b50bb0d2a5dcc76f8ea9a",
+ "url": "https://raw.githubusercontent.com/OpenSurface/Sipquel.com/main/docs/public/firmware/p4_7inch/sipquel-0.3.10.bin",
+ "notes": "Reference pressure and flow behind every shot graph",
+ "signature": "MEYCIQDnfxR8LFzVArkEfXjhaOKtNjvNHtYI9c2C7jbBNJdsCQIhAJBB63Udv5vkfvh9iwbADmpL+qk3YMmsOPfCUqOl7vVN"
 }
