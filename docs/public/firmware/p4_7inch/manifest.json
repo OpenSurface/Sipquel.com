@@ -1,0 +1,10 @@
+{
+ "schema": 1,
+ "board": "p4_7inch",
+ "version": "0.2.1",
+ "size": 6206496,
+ "sha256": "2d6dccd9ba92f7b87cf3010dde0178ee06bafde8761523499e40a33daa09797a",
+ "url": "https://raw.githubusercontent.com/OpenSurface/Sipquel.com/main/docs/public/firmware/p4_7inch/sipquel-0.2.1.bin",
+ "notes": "Over-the-air updates, screen sleep, pour saving from the browser",
+ "signature": "MEUCICF/gMMittLqSgaHpZkK+F3GoSLLGf5IsMJncLSMJYFrAiEAgXPnztf4dYyE9P1HIzTw//CtZePvnPMeIh41Q7GLHrk="
+}
