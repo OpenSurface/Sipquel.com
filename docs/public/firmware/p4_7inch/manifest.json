@@ -1,10 +1,10 @@
 {
  "schema": 1,
  "board": "p4_7inch",
- "version": "0.2.2",
- "size": 6206528,
- "sha256": "41b9f8cfa21cb6c58855c6725e97acd28de62b6e452eb6844e48e6aa9d86208a",
- "url": "https://raw.githubusercontent.com/OpenSurface/Sipquel.com/main/docs/public/firmware/p4_7inch/sipquel-0.2.2.bin",
- "notes": "Restarts happen in the dark: no blue flash",
- "signature": "MEQCIDe0aBJRC12Dd1vSVc2Gb/ZBecoXEf7H6ncrf2OWGYjWAiBOzowimMGcNEETrrK2bnKsluK59rVzAnao5M9oSJR9ww=="
+ "version": "0.3.1",
+ "size": 6209600,
+ "sha256": "4324e310aac3dbf31a6b7495a3d5d916cb6fd736a699d130172b052b965e8cba",
+ "url": "https://raw.githubusercontent.com/OpenSurface/Sipquel.com/main/docs/public/firmware/p4_7inch/sipquel-0.3.1.bin",
+ "notes": "Updates without restarting first; no blue screen",
+ "signature": "MEYCIQD2yv0n+02O+saZ3DS8lPJnLYtaKdA2g50eiFYaoCkgJAIhANkphD/n6OFJknsgBpcHIWZeaPBYfkosMHpAlEvHaxkL"
 }
