@@ -1,10 +1,10 @@
 {
  "schema": 1,
  "board": "p4_7inch",
- "version": "0.3.4",
- "size": 6213776,
- "sha256": "70ddaa6ee4d84309a2547682f64a703dfcdcef6ebdd3009732aaf999416a3d66",
- "url": "https://raw.githubusercontent.com/OpenSurface/Sipquel.com/main/docs/public/firmware/p4_7inch/sipquel-0.3.4.bin",
- "notes": "Update shows a progress window and restarts by itself",
- "signature": "MEUCIQDEPdHA3synMhuee1MqPlaG5lLu1K3uB1W+8tLtGXg6HAIgacoe+EeZhS6Z1ev0YyoP8z19kY8q2hSzw0VWTFzsKOM="
+ "version": "0.3.6",
+ "size": 6210512,
+ "sha256": "7b0dc824e6915427d4506cfc8b3ed2bf5b575b6fd03a3bc0f96b33bb96bf3fa3",
+ "url": "https://raw.githubusercontent.com/OpenSurface/Sipquel.com/main/docs/public/firmware/p4_7inch/sipquel-0.3.6.bin",
+ "notes": "Smoother screen while an update downloads",
+ "signature": "MEUCIQDTpIRtSCZbbn/WASnGLY6U3NLFXIEPD6VZRg7OOJsavAIgX0yCBOljuL9ol7rGC5h4vogfGRQQGhL4DbvjvRgkQ6U="
 }
