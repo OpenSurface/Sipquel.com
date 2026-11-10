@@ -1,10 +1,10 @@
 {
  "schema": 1,
  "board": "p4_7inch",
- "version": "0.3.6",
- "size": 6210512,
- "sha256": "7b0dc824e6915427d4506cfc8b3ed2bf5b575b6fd03a3bc0f96b33bb96bf3fa3",
- "url": "https://raw.githubusercontent.com/OpenSurface/Sipquel.com/main/docs/public/firmware/p4_7inch/sipquel-0.3.6.bin",
- "notes": "Smoother screen while an update downloads",
- "signature": "MEUCIQDTpIRtSCZbbn/WASnGLY6U3NLFXIEPD6VZRg7OOJsavAIgX0yCBOljuL9ol7rGC5h4vogfGRQQGhL4DbvjvRgkQ6U="
+ "version": "0.3.7",
+ "size": 6212224,
+ "sha256": "4227bea72bf8551da994669bd77ef76fde3ec91e08ca5bf8e4864e7237a5b637",
+ "url": "https://raw.githubusercontent.com/OpenSurface/Sipquel.com/main/docs/public/firmware/p4_7inch/sipquel-0.3.7.bin",
+ "notes": "Your best shot drawn behind the live graph; smoother updates",
+ "signature": "MEQCIGiVCogjUr62Ih1ml8c3yrlhTn2Xth+dAr5fitJZf03sAiAt/LIffm4yQkXnGET0EjdcSvfTQeh5a+Vx2wxDqkeQ0Q=="
 }
