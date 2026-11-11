@@ -1,10 +1,10 @@
 {
  "schema": 1,
  "board": "p4_7inch",
- "version": "0.3.14",
- "size": 6216912,
- "sha256": "9165d9e05c466e23c097fdfd77157e822dedbec637430e8a75b365cdaa5337d4",
- "url": "https://raw.githubusercontent.com/OpenSurface/Sipquel.com/main/docs/public/firmware/p4_7inch/sipquel-0.3.14.bin",
- "notes": "Last shot on the same profile behind every espresso graph",
- "signature": "MEUCIQCNMXlPqCWuUBD1CeUkLbE2s9/pfUXknwWX81BXO1fzfAIgWgBKDU/evc5bIiYaiqPRgtADknk7U4M2403kVr6Mggc="
+ "version": "0.3.16",
+ "size": 6227504,
+ "sha256": "0c729c773eab663acdf20ad71894c7a05a37a4bcc2c377b841fdd12ee263cdf6",
+ "url": "https://raw.githubusercontent.com/OpenSurface/Sipquel.com/main/docs/public/firmware/p4_7inch/sipquel-0.3.16.bin",
+ "notes": "Profile targets as dashed lines behind every shot",
+ "signature": "MEQCIBwQU3Cqn6qnHSX69I1GV64mZ2e2qHgOs9od8EwPODIWAiBpOH0Z1a0YzoR1gq7UCltK/aG7R0+lyiujgjFdWXq9jw=="
 }
