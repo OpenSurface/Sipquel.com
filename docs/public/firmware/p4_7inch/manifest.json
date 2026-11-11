@@ -1,10 +1,10 @@
 {
  "schema": 1,
  "board": "p4_7inch",
- "version": "0.3.16",
- "size": 6227504,
- "sha256": "0c729c773eab663acdf20ad71894c7a05a37a4bcc2c377b841fdd12ee263cdf6",
- "url": "https://raw.githubusercontent.com/OpenSurface/Sipquel.com/main/docs/public/firmware/p4_7inch/sipquel-0.3.16.bin",
- "notes": "Profile targets as dashed lines behind every shot",
- "signature": "MEQCIBwQU3Cqn6qnHSX69I1GV64mZ2e2qHgOs9od8EwPODIWAiBpOH0Z1a0YzoR1gq7UCltK/aG7R0+lyiujgjFdWXq9jw=="
+ "version": "0.3.19",
+ "size": 6229120,
+ "sha256": "2050255064b50e5b444cd0cf622804c48bb4a4b05a098e693f6885f879ea13d7",
+ "url": "https://raw.githubusercontent.com/OpenSurface/Sipquel.com/main/docs/public/firmware/p4_7inch/sipquel-0.3.19.bin",
+ "notes": "Machine's exact targets behind every shot; Gaggiuino colours",
+ "signature": "MEUCIH38WW4qDo7xVJOv/BOiBLzF/NMdcUD8LZgjP+lAfuH4AiEAxr7zowhLguM2aK10YA4kpS7Gu+8al7N8d4m+cP0dzC0="
 }
