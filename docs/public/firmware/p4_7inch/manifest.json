@@ -1,10 +1,10 @@
 {
  "schema": 1,
  "board": "p4_7inch",
- "version": "0.3.13",
- "size": 6216672,
- "sha256": "fd3b2765c28ed5bb44ac3be049e3a5533eb7beb8c4bff073734a98dc7f1272bf",
- "url": "https://raw.githubusercontent.com/OpenSurface/Sipquel.com/main/docs/public/firmware/p4_7inch/sipquel-0.3.13.bin",
- "notes": "One chart style everywhere; weight and temperature scales",
- "signature": "MEQCIAwjSfIhCRiKm7S8JN44nQNa1MfQua6IDDMsFEhVJEV+AiAO+cwxKe5cJlh4j/yvLVv9cewsc5JLe0ohri+W+gi3Og=="
+ "version": "0.3.14",
+ "size": 6216912,
+ "sha256": "9165d9e05c466e23c097fdfd77157e822dedbec637430e8a75b365cdaa5337d4",
+ "url": "https://raw.githubusercontent.com/OpenSurface/Sipquel.com/main/docs/public/firmware/p4_7inch/sipquel-0.3.14.bin",
+ "notes": "Last shot on the same profile behind every espresso graph",
+ "signature": "MEUCIQCNMXlPqCWuUBD1CeUkLbE2s9/pfUXknwWX81BXO1fzfAIgWgBKDU/evc5bIiYaiqPRgtADknk7U4M2403kVr6Mggc="
 }
