@@ -1,10 +1,10 @@
 {
  "schema": 1,
  "board": "p4_7inch",
- "version": "0.3.10",
- "size": 6213152,
- "sha256": "0432b0531238b1ac88a7a521e7263bdb515d341c150b50bb0d2a5dcc76f8ea9a",
- "url": "https://raw.githubusercontent.com/OpenSurface/Sipquel.com/main/docs/public/firmware/p4_7inch/sipquel-0.3.10.bin",
- "notes": "Reference pressure and flow behind every shot graph",
- "signature": "MEYCIQDnfxR8LFzVArkEfXjhaOKtNjvNHtYI9c2C7jbBNJdsCQIhAJBB63Udv5vkfvh9iwbADmpL+qk3YMmsOPfCUqOl7vVN"
+ "version": "0.3.11",
+ "size": 6216048,
+ "sha256": "03a2c19dc59abd408842516afc549ebe54706921df0b4cad7d95645c62fba4a7",
+ "url": "https://raw.githubusercontent.com/OpenSurface/Sipquel.com/main/docs/public/firmware/p4_7inch/sipquel-0.3.11.bin",
+ "notes": "Daily update notice; updates from the web app; web Journal fix",
+ "signature": "MEYCIQDqPNy1z+IITeWXq0uDEaTXUNcUhz7vbI4coTaxP5b9/gIhAONwqMQdjfxBTAJGqXBNUiSoI4F9mt64iHO7swxBkRqW"
 }
