@@ -4,7 +4,7 @@ import { betaLink, BETA_URL } from './theme/site.ts'
 
 const SITE = 'https://sipquel.com'
 const DESCRIPTION =
-  'Sipquel is a 7-inch touchscreen for your coffee bar. It runs your scale, grinder and espresso machine, follows every brew live and keeps a journal you never have to write.'
+  'Sipquel is a 7-inch touchscreen for your coffee bar. Pick a recipe and it sets up your espresso machine and grinder for it, follows every shot live and keeps a journal you never have to write.'
 
 export default defineConfig({
   title: 'Sipquel',

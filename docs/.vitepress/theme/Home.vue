@@ -210,8 +210,9 @@ onBeforeUnmount(() => { reveal?.disconnect(); steps?.disconnect(); hint?.disconn
       </a>
       <h1><span class="ln">Your coffee bar,</span><em class="ln">orchestrated.</em></h1>
       <p class="sq-lead">
-        A 7-inch touchscreen for your counter. It runs your scale, grinder and espresso machine,
-        follows every brew live, and keeps a journal you never have to write.
+        A 7-inch touchscreen for your counter. Pick a recipe and tap Set the bench: your espresso
+        machine gets the profile, brew temperature and stop weight, your grinder its preset and speeds.
+        Then Sipquel follows every shot live and keeps a journal you never have to write.
       </p>
       <div class="sq-cta">
         <BetaButton />
@@ -256,7 +257,7 @@ onBeforeUnmount(() => { reveal?.disconnect(); steps?.disconnect(); hint?.disconn
           <div><h3>{{ b.name }}</h3><p>{{ b.text }}</p></div>
         </article>
       </div>
-      <p class="sq-bench-note sq-rv">Nothing is sent until you tap Set it up, and Sipquel never starts a shot or heats water on its own.</p>
+      <p class="sq-bench-note sq-rv">Nothing is sent until you tap Set it up, and Sipquel never starts a shot or heats water on its own. For pour-over, the recipe's water temperature is shown beside your kettle; sending it to the kettle is not supported yet.</p>
     </section>
 
     <!-- Story: one espresso, start to finish -->
