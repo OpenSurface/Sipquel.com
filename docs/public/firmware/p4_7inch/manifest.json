@@ -1,10 +1,10 @@
 {
  "schema": 1,
  "board": "p4_7inch",
- "version": "0.3.19",
- "size": 6229120,
- "sha256": "2050255064b50e5b444cd0cf622804c48bb4a4b05a098e693f6885f879ea13d7",
- "url": "https://raw.githubusercontent.com/OpenSurface/Sipquel.com/main/docs/public/firmware/p4_7inch/sipquel-0.3.19.bin",
- "notes": "Machine's exact targets behind every shot; Gaggiuino colours",
- "signature": "MEUCIH38WW4qDo7xVJOv/BOiBLzF/NMdcUD8LZgjP+lAfuH4AiEAxr7zowhLguM2aK10YA4kpS7Gu+8al7N8d4m+cP0dzC0="
+ "version": "0.4.5",
+ "size": 5226720,
+ "sha256": "7cc7c7e1cbf357a0f17dfd083ab58290c49609d8a33dbddc3a38a8415bb32194",
+ "url": "https://raw.githubusercontent.com/OpenSurface/Sipquel.com/main/docs/public/firmware/p4_7inch/sipquel-0.4.5.bin",
+ "notes": "GaggiMate (experimental), saved devices, device switching fixes, more room",
+ "signature": "MEYCIQDI/rBH0dnJF549SSkTkTdL0UW+LxaCAisQY3HhhPsNewIhAPBJkkSzB7/rGTfiBooek3e0Nb+s33uA+xXexFzS2Efg"
 }
