@@ -247,6 +247,10 @@
 .sq-badge.is-coming { color: var(--sq-ink-3); border-color: var(--sq-line-2); }
 .sq-note { margin-top: 22px !important; }
 
+.sq-scale-section { margin-top: 40px; scroll-margin-top: 100px; }
+.sq .sq-scale-section h3 { font-size: clamp(24px, 3vw, 32px); margin-bottom: 8px; }
+.sq .sq-scale-intro { color: var(--sq-ink-2); font-size: 16px; line-height: 1.7; }
+
 /* Specs band */
 .sq-band { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-radius: 26px; border: 1px solid var(--sq-line);
   background: radial-gradient(80% 140% at 50% 0%, rgba(224, 192, 136, .08), transparent 60%), var(--sq-bg-2); }

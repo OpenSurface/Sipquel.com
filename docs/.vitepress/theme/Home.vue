@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 import DeviceArt from './DeviceArt.vue'
+import ScaleList from './ScaleList.vue'
 import BetaButton from './BetaButton.vue'
 import { BETA_URL, GITHUB_URL } from './site'
 
@@ -100,7 +101,7 @@ const extras = [
 ]
 
 const devices = [
-  { art: 'themis', name: 'Bluetooth scales', kind: 'BOOKOO + 11 more families', status: 'Experimental' },
+  { art: 'themis', name: 'BOOKOO Themis', kind: 'Scale', status: 'Supported' },
   { art: 'motto80', name: 'BOOKOO Motto80', kind: 'Grinder', status: 'Supported' },
   { art: 'gaggia', name: 'Gaggiuino', kind: 'Espresso machine', status: 'Supported' },
   { art: 'kettle', name: 'Fellow Stagg EKG', kind: 'Kettle', status: 'Experimental' },
@@ -412,9 +413,13 @@ onBeforeUnmount(() => { reveal?.disconnect(); steps?.disconnect(); hint?.disconn
           </div>
         </article>
       </div>
-      <p class="sq-note">BOOKOO, Acaia, Decent, DiFluid, Eclair, Eureka, Felicita, Timemore (DUO and Dot), Varia, WeighMyBru and MyScale.
-        BOOKOO Themis is hardware-tested; the additional scales and GaggiMate are experimental.
-        Expanded scales require firmware 0.4.69 or newer. <a href="/guide/devices">Full model list and features →</a></p>
+      <div id="scales" class="sq-scale-section">
+        <h3>Find your scale.</h3>
+        <p class="sq-scale-intro">12 Bluetooth scale families. See your brand and model below, or search to find it.</p>
+        <ScaleList />
+        <p class="sq-note">BOOKOO Themis is hardware-tested; the additional scales and GaggiMate are experimental.
+          Expanded scales require firmware 0.4.69 or newer. <a href="/guide/devices">Features and firmware availability →</a></p>
+      </div>
     </section>
 
     <!-- Specs -->

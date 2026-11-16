@@ -1,6 +1,10 @@
+<script setup>
+import ScaleList from '../.vitepress/theme/ScaleList.vue'
+</script>
+
 # Supported devices
 
-Sipquel connects to your coffee gear over Bluetooth and Wi-Fi. Support varies by device; the tables below describe what is available and what still needs testing.
+Sipquel connects to your coffee gear over Bluetooth and Wi-Fi. Support varies by device; the device lists below describe what is available and what still needs testing.
 
 ## Espresso machines, grinders and kettles
 
@@ -22,20 +26,7 @@ Sipquel integrates the **12 scale protocol families used by GaggiMate**, includi
 Expanded scale support requires **Sipquel 0.4.69 or newer**. Earlier builds, including the website's current 0.4.5 download, do not include this expanded list. Ask in the [beta](/guide/beta) if your model is not offered by your build.
 :::
 
-| Scale family | Models / recognised Bluetooth names | Status |
-|---|---|---|
-| BOOKOO | Themis Mini / Ultra | **Supported** |
-| Acaia | Lunar, Pearl, Pyxis; ACAIA, PROCH and Umbra Lunar | **Experimental** |
-| Decent | Decent Scale / EspressiScale | **Experimental** |
-| DiFluid | Microbalance / Microbalance Ti | **Experimental** |
-| Eclair | ECLAIR- | **Experimental** |
-| Eureka | Precisa; CFS-9002 / LSJ-001 | **Experimental** |
-| Felicita | Arc / FELICITA | **Experimental** |
-| Timemore Black Mirror | DUO / TIMEMORE SCALE | **Experimental** |
-| Timemore Dot | TIMEMORE_DOT | **Experimental** |
-| Varia | AKU, AKU Mini / Pro | **Experimental** |
-| WeighMyBru | WEIGHMYBRU | **Experimental** |
-| MyScale | KP2048B / blackcoffee / my_scale | **Experimental** |
+<ScaleList />
 
 Scales provide live weight and an explicit Tare action for dose capture and brew guidance. Flow and battery appear when the scale reports them. This does not promise every vendor's timer, auto-tare, unit-setting or sound features. Sipquel runs its own brew timer and plays cues through the panel's speaker.
 
