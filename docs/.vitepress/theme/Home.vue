@@ -5,7 +5,7 @@ import ScaleList from './ScaleList.vue'
 import BetaButton from './BetaButton.vue'
 import { BETA_URL, GITHUB_URL } from './site'
 
-// Every image on this page is a real capture of the panel's own UI.
+// Screens show the production panel UI, including captures rendered with sample data.
 const img = (id: string, day = false) => `/screens/${id}${day ? '-day' : ''}.webp`
 
 const story = [
@@ -58,9 +58,16 @@ const wall = [
   { id: 'steep', title: 'Immersion brews too', text: 'AeroPress and French press get their own guide: steep, swirl, settle and press, each with its time.',
     alt: 'An AeroPress steep: 0:50 left, then swirl at 2:00, with the steps Pour, Plunger in, Steep, Swirl, Settle and Press.' },
 ]
-const zoom = ref(wall[0])
+const simpleHome = [
+  { id: 'simple-home-espresso', title: 'Espresso', alt: 'Simple Home in Espresso mode, with the recipe, coffee, profile, brew temperature, stop weight and grinder target.' },
+  { id: 'simple-home-v60', title: 'V60', alt: 'Simple Home with the Better 1-Cup V60 recipe, showing dose, water, kettle temperature and grind size.' },
+  { id: 'simple-home-aeropress', title: 'AeroPress', alt: 'Simple Home with the Ultimate AeroPress recipe, showing dose, water, kettle temperature and grind size.' },
+]
+
+type Screenshot = Pick<typeof wall[number], 'id' | 'title' | 'alt'>
+const zoom = ref<Screenshot>(wall[0])
 const box = ref<HTMLDialogElement | null>(null)
-function openBox(w: typeof wall[number]) { zoom.value = w; box.value?.showModal() }
+function openBox(screen: Screenshot) { zoom.value = screen; box.value?.showModal() }
 
 const compare = [
   { id: 'home', label: 'Home' },
@@ -228,6 +235,21 @@ onBeforeUnmount(() => { reveal?.disconnect(); steps?.disconnect(); hint?.disconn
         <div class="sq-counter" aria-hidden="true" />
       </div>
       <p class="sq-trust">Works with <b>BOOKOO</b><i /><b>Gaggiuino</b><i /><b>Fellow</b> <span>experimental</span></p>
+    </section>
+
+    <section id="simple-home" class="sq-section" aria-labelledby="simple-home-title">
+      <header class="sq-head sq-rv">
+        <h2 id="simple-home-title">Simple Home</h2>
+        <p class="sq-sub">See your recipe and four key targets at a glance, then tap Prepare brew. Choose Simple under Settings &rarr; Display &rarr; Home layout on your panel.</p>
+      </header>
+      <div class="sq-wall sq-simple-home-grid">
+        <article v-for="screen in simpleHome" :key="screen.id" class="sq-wall-card sq-rv">
+          <button type="button" class="sq-frame sq-wall-shot" :aria-label="'Enlarge ' + screen.title + ' screen'" @click="openBox(screen)">
+            <img :src="img(screen.id)" width="1024" height="600" loading="lazy" :alt="screen.alt">
+          </button>
+          <h3>{{ screen.title }}</h3>
+        </article>
+      </div>
     </section>
 
     <!-- Manifesto -->
@@ -473,6 +495,7 @@ onBeforeUnmount(() => { reveal?.disconnect(); steps?.disconnect(); hint?.disconn
       <nav class="sq-foot-cols" aria-label="Footer">
         <div>
           <h4>Product</h4>
+          <a href="#simple-home">Simple Home</a>
           <a href="#features">Features</a>
           <a href="/guide/how-it-works">How it works</a>
           <a href="/guide/devices">Devices</a>
